@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://christos.fashion/sitemap.xml
+
+# Block access to any admin or private files if added later
+Disallow: /admin/
+Disallow: /.env
