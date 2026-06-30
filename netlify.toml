@@ -1,0 +1,31 @@
+[build]
+  functions = "netlify/functions"
+  publish   = "."
+
+# Redirect all /api/* calls to the matching Netlify Function
+[[redirects]]
+  from   = "/api/*"
+  to     = "/.netlify/functions/:splat"
+  status = 200
+
+# Security / CORS headers for function responses
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin  = "https://christos.fashion"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
+
+# Cache static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Frame-Options       = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy       = "strict-origin-when-cross-origin"

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmed — Christos.Fashion</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .success-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px 60px;
+    }
+    .success-card {
+      text-align: center;
+      max-width: 500px;
+      background: var(--surface-1);
+      border: 1px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 48px 40px;
+    }
+    .success-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(82,201,138,.12);
+      border: 1px solid #52c98a;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .order-id {
+      font-family: 'Inter', sans-serif;
+      font-size: .78rem;
+      letter-spacing: .1em;
+      color: var(--cream-35);
+      background: var(--surface-2);
+      border-radius: 4px;
+      padding: 6px 12px;
+      display: inline-block;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <header class="nav" id="nav" role="banner">
+    <div class="nav-inner">
+      <nav class="nav-links"><a href="index.html" class="nav-link">Home</a><a href="shop.html" class="nav-link">Shop</a></nav>
+      <a href="index.html"><img src="assets/christos-logo-gold.png" alt="Christos.Fashion" class="nav-logo"/></a>
+      <div class="nav-right"><nav class="nav-links"><a href="faq.html" class="nav-link">FAQ</a><a href="contact.html" class="nav-link">Contact</a></nav></div>
+    </div>
+  </header>
+
+  <main class="success-page" id="main-content">
+    <div class="success-card">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#52c98a" stroke-width="2.5" width="28" height="28" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <p class="eyebrow">Order Confirmed</p>
+      <h1 style="font-family:'Cinzel',serif; font-size:1.6rem; margin-block:12px 8px">Thank You!</h1>
+      <p style="color:var(--cream-60); line-height:1.75">
+        Your order is confirmed and will be sent to Printify for fulfillment.
+        You'll receive a shipping confirmation by email once your item is on its way.
+      </p>
+      <div class="order-id" id="order-id-display"></div>
+      <div style="margin-top:32px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap">
+        <a href="shop.html" class="btn btn-outline">Keep Shopping</a>
+        <a href="index.html" class="btn btn-primary">Back to Home</a>
+      </div>
+      <p style="font-size:.78rem; color:var(--cream-35); margin-top:28px; line-height:1.6">
+        Questions? <a href="contact.html" style="color:var(--gold)">Contact us</a> with your order ID above.
+      </p>
+    </div>
+  </main>
+
+  <script>
+    const params  = new URLSearchParams(window.location.search);
+    const orderId = params.get('order');
+    if (orderId) {
+      const el = document.getElementById('order-id-display');
+      el.textContent = 'Order ID: ' + orderId;
+    }
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
