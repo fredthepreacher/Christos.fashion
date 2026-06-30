@@ -2,19 +2,17 @@
   functions = "netlify/functions"
   publish   = "."
 
+[build.environment]
+  NODE_VERSION = "18"
+
+[functions]
+  node_bundler = "esbuild"
+
 # Redirect all /api/* calls to the matching Netlify Function
 [[redirects]]
   from   = "/api/*"
   to     = "/.netlify/functions/:splat"
   status = 200
-
-# Security / CORS headers for function responses
-[[headers]]
-  for = "/api/*"
-  [headers.values]
-    Access-Control-Allow-Origin  = "https://christos.fashion"
-    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type"
 
 # Cache static assets
 [[headers]]
