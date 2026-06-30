@@ -26,7 +26,7 @@ exports.handler = async (event) => {
     console.log('Fetching products for shop:', PRINTIFY_SHOP_ID);
 
     const response = await fetch(
-      `${PRINTIFY_BASE}/shops/${PRINTIFY_SHOP_ID}/products.json?limit=100`,
+      `${PRINTIFY_BASE}/shops/${PRINTIFY_SHOP_ID}/products.json?limit=50`,
       {
         headers: {
           Authorization: `Bearer ${PRINTIFY_API_KEY}`,
