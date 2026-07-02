@@ -1,15 +1,9 @@
 {
   "name": "christos-fashion",
   "version": "1.0.0",
-  "description": "Christos.Fashion — Netlify Functions for Printify + Stripe integration",
   "private": true,
-  "scripts": {
-    "dev": "netlify dev"
-  },
+  "description": "Christos.Fashion — Printify + Stripe storefront on Netlify",
   "dependencies": {
     "stripe": "^14.0.0"
-  },
-  "engines": {
-    "node": ">=18"
   }
 }
