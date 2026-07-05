@@ -4,6 +4,10 @@ Allow: /
 # Sitemap
 Sitemap: https://christos.fashion/sitemap.xml
 
+# Keep transactional pages out of search results
+Disallow: /checkout.html
+Disallow: /order-success.html
+
 # Block access to any admin or private files if added later
 Disallow: /admin/
 Disallow: /.env

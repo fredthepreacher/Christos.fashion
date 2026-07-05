@@ -5,6 +5,27 @@ CartUI.init();
 
 var allProducts = [];
 
+// Homepage featured curation:
+//  • EXCLUDE the women's "Built by Faith" tee from the homepage only —
+//    it stays fully available in the shop catalog.
+//  • Always feature the Jesus Saves hat (any product in the "hats"
+//    category), placed second for visual balance.
+var FEATURED_EXCLUDE_IDS = [
+  '6a432a94a19392bba5093566', // Built by Faith women's tee (Cross Typography)
+];
+
+function pickFeatured(products) {
+  var pool = products.filter(function (p) {
+    return FEATURED_EXCLUDE_IDS.indexOf(p.id) === -1;
+  });
+
+  var hat      = pool.find(function (p) { return p.category === 'hats'; });
+  var featured = pool.filter(function (p) { return p !== hat; }).slice(0, hat ? 3 : 4);
+  if (hat) featured.splice(1, 0, hat); // hat takes the #2 slot
+
+  return featured;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   var grid = document.getElementById('featured-grid');
   if (!grid) return;
@@ -14,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(function (products) {
       if (!Array.isArray(products)) throw new Error('Bad products payload');
       allProducts = products;
-      var featured = products.slice(0, 4);
+      var featured = pickFeatured(products);
 
       grid.innerHTML = featured.map(function (p, idx) {
         var title       = cleanTitle(p.title);
@@ -29,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '<article class="product-card reveal" data-product-id="' + p.id + '" data-category="' + p.category + '"' + delay + ' itemscope itemtype="https://schema.org/Product">' +
             '<div class="product-img-wrap">' +
               (p.image
-                ? '<img src="' + p.image + '" alt="' + esc(title) + ' — Christos.Fashion" loading="lazy" itemprop="image"/>'
+                ? '<img src="' + p.image + '" alt="' + esc(title) + ' — Christian apparel by Christos.Fashion" loading="lazy" decoding="async" width="600" height="600" itemprop="image"/>'
                 : '<div class="product-img-placeholder"><span class="design-text">' + esc(title) + '</span><svg class="design-cross" viewBox="0 0 20 28" fill="currentColor"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg></div>') +
               '<div class="product-quick-add" aria-hidden="true">' + (hasMultiple ? 'Choose Options' : 'Add to Cart') + '</div>' +
             '</div>' +

@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary SEO -->
-  <title>Shop Christian Apparel — Christos.Fashion | T-Shirts, Hats & More</title>
-  <meta name="description" content="Shop Christos.Fashion's full collection of Christian t-shirts, hats, and hoodies. Bold faith-based apparel designed for believers who represent Christ every day. Free shipping on orders $50+." />
-  <meta name="keywords" content="Christian t-shirts, Christian apparel, faith-based clothing, Jesus shirts, Christian hats, Gospel clothing, Christian streetwear, Built by Faith shirt, Faith Over Fear tee" />
+  <title>Shop Christian Apparel — Jesus Shirts & the Jesus Saves Hat | Christos.Fashion</title>
+  <meta name="description" content="Shop the full Christos.Fashion collection: Christian graphic tees like Built by Faith and Pray Work Repeat, plus the Jesus Saves trucker hat. Bold faith-based apparel with secure Stripe checkout. Free US shipping on orders $50+." />
+  <meta name="keywords" content="Christian t-shirts, Christian apparel, faith-based clothing, Jesus shirts, Jesus Saves hat, Christian hats, gospel clothing, Christian streetwear, Christian graphic tees, Built by Faith shirt" />
   <link rel="canonical" href="https://christos.fashion/shop.html" />
+  <meta name="theme-color" content="#0a0a0a" />
 
   <!-- Open Graph -->
   <meta property="og:type"        content="website" />
@@ -20,7 +21,8 @@
   <!-- Twitter Card -->
   <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:title"       content="Shop — Christos.Fashion Christian Apparel" />
-  <meta name="twitter:description" content="Premium Christian t-shirts, hats, and hoodies. Wear your faith boldly." />
+  <meta name="twitter:description" content="Premium Christian t-shirts and the Jesus Saves trucker hat. Wear your faith boldly." />
+  <meta name="twitter:image"       content="https://christos.fashion/assets/og-image.jpg" />
 
   <meta name="robots"  content="index, follow" />
   <meta name="author"  content="Christos.Fashion" />
@@ -31,24 +33,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Product Schema (ItemList) -->
+  <!-- CollectionPage Schema (accurate Product/Offer ItemList is injected
+       dynamically by js/shop-loader.js from the live Printify catalog) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": "Christos.Fashion — Full Collection",
-    "description": "Christian apparel including t-shirts, hats, and hoodies with bold faith-based designs",
+    "@type": "CollectionPage",
+    "name": "Shop Christian Apparel — Christos.Fashion",
+    "description": "The full Christos.Fashion collection of Christian apparel: faith-based graphic t-shirts and the Jesus Saves trucker hat. Bold gospel-centered designs for everyday wear.",
     "url": "https://christos.fashion/shop.html",
-    "itemListElement": [
-      {"@type":"ListItem","position":1,"name":"Built By Faith Tee","url":"https://christos.fashion/shop.html#built-by-faith"},
-      {"@type":"ListItem","position":2,"name":"Faith Over Fear Tee","url":"https://christos.fashion/shop.html#faith-over-fear"},
-      {"@type":"ListItem","position":3,"name":"Pray. Work. Repeat. Tee","url":"https://christos.fashion/shop.html#pray-work-repeat"},
-      {"@type":"ListItem","position":4,"name":"Christ Over Culture Tee","url":"https://christos.fashion/shop.html#christ-over-culture"},
-      {"@type":"ListItem","position":5,"name":"God Taught Me Tee","url":"https://christos.fashion/shop.html#god-taught-me"},
-      {"@type":"ListItem","position":6,"name":"Work Hard, God First Tee","url":"https://christos.fashion/shop.html#work-hard-god-first"},
-      {"@type":"ListItem","position":7,"name":"I Thought It Was Over Tee","url":"https://christos.fashion/shop.html#i-thought-it-was-over"},
-      {"@type":"ListItem","position":8,"name":"Jesus Saves Snapback Hat","url":"https://christos.fashion/shop.html#jesus-saves-hat"}
-    ]
+    "isPartOf": { "@type": "WebSite", "name": "Christos.Fashion", "url": "https://christos.fashion" },
+    "about": { "@type": "Thing", "name": "Christian apparel" }
   }
   </script>
 
@@ -107,7 +102,7 @@
       </nav>
       <p class="eyebrow">The Full Collection</p>
       <h1>Faith-Filled Apparel<br><span class="title-italic">For Every Day.</span></h1>
-      <p>Every piece designed to encourage, inspire, and represent Christ wherever you go.</p>
+      <p>Christian graphic tees, the Jesus Saves trucker hat, and gospel-centered designs — every piece made to encourage, inspire, and represent Christ wherever you go.</p>
     </div>
 
     <!-- TRUST STRIP -->
@@ -129,7 +124,7 @@
         <div class="shop-header-row">
           <div>
             <h2 id="shop-heading" style="font-size:1.4rem; letter-spacing:.04em">All Products</h2>
-            <p class="product-count" id="product-count">8 products</p>
+            <p class="product-count" id="product-count">Loading products…</p>
           </div>
           <div class="filter-tabs" role="group" aria-label="Filter products by category">
             <button class="tab-btn active" data-filter="all"     aria-pressed="true">All</button>

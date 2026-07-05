@@ -1723,3 +1723,30 @@ blockquote, .scripture {
 .skeleton-line { height: 12px; border-radius: 4px; background: var(--surface-2); margin: 8px 0; animation: shimmer 1.4s infinite; }
 .w-70 { width: 70%; } .w-50 { width: 50%; } .w-40 { width: 40%; }
 @keyframes shimmer { 0% { opacity: .4; } 50% { opacity: .8; } 100% { opacity: .4; } }
+
+/* ============================================================
+   ACCESSIBILITY & PERFORMANCE
+   ============================================================ */
+
+/* Respect users who prefer reduced motion: stop the marquee,
+   disable reveal/hover animation, show content immediately. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-inner { animation: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/* Visible focus states for keyboard navigation */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.variant-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }

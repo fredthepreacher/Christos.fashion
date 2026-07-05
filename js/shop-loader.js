@@ -20,6 +20,7 @@ function loadProducts() {
       allProducts = products;
       loaded = true;
       renderGrid(allProducts);
+      injectProductSchema(products);
     })
     .catch(function(err) {
       console.error('Failed to load products:', err);
@@ -51,7 +52,7 @@ function renderGrid(products) {
     return '<article class="product-card reveal" data-category="' + p.category + '" data-product-id="' + p.id + '"' + delay + ' itemscope itemtype="https://schema.org/Product">' +
       '<div class="product-img-wrap">' +
         (p.image
-          ? '<img src="' + p.image + '" alt="' + esc(title) + ' — Christos.Fashion" loading="lazy" itemprop="image"/>'
+          ? '<img src="' + p.image + '" alt="' + esc(title) + ' — Christian apparel by Christos.Fashion" loading="lazy" decoding="async" width="600" height="600" itemprop="image"/>'
           : '<div class="product-img-placeholder"><span class="design-text">' + esc(title) + '</span><svg class="design-cross" viewBox="0 0 20 28" fill="currentColor"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg></div>') +
         '<div class="product-quick-add" aria-hidden="true">' + (hasMultiple ? 'Choose Options' : 'Add to Cart') + '</div>' +
       '</div>' +
@@ -96,6 +97,47 @@ function addVariant(product, variant) {
 }
 
 function cleanTitle(raw) { return raw.split(' | ')[0].trim(); }
+
+// Inject Product/Offer structured data generated from the live catalog,
+// so search engines always see accurate names, prices, and availability.
+function injectProductSchema(products) {
+  if (document.getElementById('product-schema')) return;
+  var el = document.createElement('script');
+  el.type = 'application/ld+json';
+  el.id = 'product-schema';
+  el.textContent = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    'name': 'Christos.Fashion — Christian Apparel Collection',
+    'numberOfItems': products.length,
+    'itemListElement': products.map(function (p, i) {
+      var prices = p.variants.map(function (v) { return v.price; });
+      var inStock = p.variants.some(function (v) { return v.inStock !== false; });
+      return {
+        '@type': 'ListItem',
+        'position': i + 1,
+        'item': {
+          '@type': 'Product',
+          'name': cleanTitle(p.title),
+          'image': p.image,
+          'description': String(p.description || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300),
+          'brand': { '@type': 'Brand', 'name': 'Christos.Fashion' },
+          'category': p.category === 'hats' ? 'Christian Hats' : 'Christian T-Shirts',
+          'url': 'https://christos.fashion/shop.html',
+          'offers': {
+            '@type': 'AggregateOffer',
+            'priceCurrency': 'USD',
+            'lowPrice': (Math.min.apply(null, prices) / 100).toFixed(2),
+            'highPrice': (Math.max.apply(null, prices) / 100).toFixed(2),
+            'offerCount': p.variants.length,
+            'availability': inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+          },
+        },
+      };
+    }),
+  });
+  document.head.appendChild(el);
+}
 
 function buildSubtitle(p) {
   var colorOpt = p.options.find(function(o) { return (o.type || '').toLowerCase() === 'color' || o.name.toLowerCase().includes('color'); });

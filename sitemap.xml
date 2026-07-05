@@ -5,39 +5,51 @@
   <!-- Homepage -->
   <url>
     <loc>https://christos.fashion/</loc>
-    <lastmod>2025-07-01</lastmod>
+    <lastmod>2026-07-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://christos.fashion/assets/designs/jesus-saves-hat.png</image:loc>
+      <image:title>Jesus Saves Trucker Hat — Christian Snapback Cap</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://christos.fashion/assets/designs/built-by-faith.png</image:loc>
+      <image:title>Built by Faith Christian T-Shirt</image:title>
+    </image:image>
   </url>
 
   <!-- Shop -->
   <url>
     <loc>https://christos.fashion/shop.html</loc>
-    <lastmod>2025-07-01</lastmod>
+    <lastmod>2026-07-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
       <image:loc>https://christos.fashion/assets/designs/built-by-faith.png</image:loc>
-      <image:title>Built By Faith Christian T-Shirt</image:title>
+      <image:title>Built by Faith Christian T-Shirt</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://christos.fashion/assets/designs/faith-over-fear.png</image:loc>
-      <image:title>Faith Over Fear Christian T-Shirt</image:title>
+      <image:loc>https://christos.fashion/assets/designs/jesus-saves-hat.png</image:loc>
+      <image:title>Jesus Saves Trucker Hat — Christian Snapback Cap</image:title>
     </image:image>
     <image:image>
       <image:loc>https://christos.fashion/assets/designs/pray-work-repeat.png</image:loc>
       <image:title>Pray Work Repeat Christian T-Shirt</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://christos.fashion/assets/designs/jesus-saves-hat.png</image:loc>
-      <image:title>Jesus Saves Snapback Hat</image:title>
+      <image:loc>https://christos.fashion/assets/designs/i-thought-it-was-over.png</image:loc>
+      <image:title>I Thought It Was Over God Christian T-Shirt</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://christos.fashion/assets/designs/work-hard-god-first.png</image:loc>
+      <image:title>Work Hard God First Christian T-Shirt</image:title>
     </image:image>
   </url>
 
   <!-- About -->
   <url>
     <loc>https://christos.fashion/about.html</loc>
-    <lastmod>2025-07-01</lastmod>
+    <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -45,7 +57,7 @@
   <!-- FAQ -->
   <url>
     <loc>https://christos.fashion/faq.html</loc>
-    <lastmod>2025-07-01</lastmod>
+    <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -53,7 +65,7 @@
   <!-- Contact -->
   <url>
     <loc>https://christos.fashion/contact.html</loc>
-    <lastmod>2025-07-01</lastmod>
+    <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

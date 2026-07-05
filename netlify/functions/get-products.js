@@ -3,6 +3,26 @@ const PRINTIFY_BASE = 'https://api.printify.com/v1';
 let cache = { data: null, at: 0 };
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
+// Storefront display overrides. Printify titles/descriptions are sometimes
+// generic (e.g. "Trucker Caps"); these make them clear and search-friendly
+// without touching the Printify catalog. Orders still use the real
+// product/variant IDs, so fulfillment is unaffected.
+const PRODUCT_OVERRIDES = {
+  '6a431946030b9049f40d7dc5': {
+    title: 'Jesus Saves Trucker Hat | Christian Snapback Cap',
+    description:
+      'Wear the boldest two words in history. The Jesus Saves trucker hat pairs a clean, ' +
+      'structured foam front with a breathable mesh back — a classic snapback silhouette ' +
+      'built for everyday wear. The design points to one message: Jesus saves. Wear it to ' +
+      'church, on the job, at the gym, or anywhere a conversation might start.<br/><br/>' +
+      'Product features<br/>' +
+      '- 100% polyester foam front with nylon mesh back for all-day comfort<br/>' +
+      '- One size fits most (22.8" / 58 cm) with adjustable snapback closure<br/>' +
+      '- Six-row stitched visor for a durable, structured shape<br/>' +
+      '- Faith-centered Jesus Saves design — a Christian hat made to be noticed',
+  },
+};
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return cors(204, '');
   if (event.httpMethod !== 'GET') return cors(405, JSON.stringify({ error: 'Method not allowed' }));
@@ -59,10 +79,12 @@ exports.handler = async (event) => {
           (v.options || []).forEach(function(id) { usedValueIds[id] = true; });
         });
 
+        var ov = PRODUCT_OVERRIDES[p.id] || {};
+
         return {
           id:          p.id,
-          title:       p.title,
-          description: p.description,
+          title:       ov.title || p.title,
+          description: ov.description || p.description,
           image:       p.images && p.images[0] ? p.images[0].src : null,
           images:      (p.images || []).slice(0, 4).map(function(i) { return i.src; }),
           variants:    enabledVariants.map(function(v) {
