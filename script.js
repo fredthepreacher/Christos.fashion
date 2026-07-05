@@ -218,22 +218,43 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ============================================================
-// EMAIL FORM — Basic UI Feedback
+// EMAIL FORM — Netlify Forms (AJAX submit + inline success)
+// Submits to the Netlify form named "newsletter" and shows
+// feedback without leaving the page. Falls back to a native
+// POST (handled by Netlify) if JavaScript is disabled.
 // ============================================================
 document.querySelectorAll('.email-form, .footer-form').forEach(form => {
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
     const originalText = btn.textContent;
-    btn.textContent = '✓ Subscribed!';
+
     btn.disabled = true;
-    btn.style.background = '#27ae60';
+    btn.textContent = 'Sending…';
+
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString(),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      btn.textContent = '✓ Subscribed!';
+      btn.style.background = '#27ae60';
+      form.reset();
+    } catch (err) {
+      console.error('Newsletter signup failed:', err);
+      btn.textContent = 'Try again';
+      btn.style.background = '#c0392b';
+      btn.disabled = false;
+    }
+
     setTimeout(() => {
       btn.textContent = originalText;
       btn.disabled = false;
       btn.style.background = '';
-      form.reset();
-    }, 3000);
+    }, 4000);
   });
 });
 

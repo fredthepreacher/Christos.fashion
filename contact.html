@@ -147,19 +147,16 @@
 
           </div>
 
-          <!-- FORM -->
-          <!-- ✅ FORMSPREE SETUP:
-               1. Go to https://formspree.io and create a free account
-               2. Click "New Form" → name it "Christos.Fashion Contact"
-               3. Copy your Form ID (looks like: xpwzabcd)
-               4. Replace YOUR_FORM_ID below with that ID
-               5. Done — submissions go straight to hello@christos.fashion
-          -->
+          <!-- FORM — Netlify Forms ("contact") -->
           <div class="reveal" style="--reveal-delay:.1s">
             <form class="contact-form" id="contact-form"
-                  action="https://formspree.io/f/YOUR_FORM_ID"
+                  name="contact"
                   method="POST"
+                  data-netlify="true"
+                  netlify-honeypot="_gotcha"
                   aria-label="Contact form">
+
+              <input type="hidden" name="form-name" value="contact" />
 
               <div class="form-group">
                 <label for="contact-name">Your Name</label>
@@ -189,10 +186,8 @@
                 <textarea id="contact-message" name="message" class="form-textarea" placeholder="Tell us how we can help..." required></textarea>
               </div>
 
-              <!-- Formspree redirect after success (optional — remove if you want to stay on page) -->
-              <input type="hidden" name="_next" value="https://christos.fashion/contact.html?sent=true" />
-              <!-- Prevent spam bots -->
-              <input type="text" name="_gotcha" style="display:none" />
+              <!-- Prevent spam bots (Netlify honeypot) -->
+              <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
               <div id="form-success" style="display:none; background:var(--surface-2); border:1px solid var(--border-gold); border-radius:var(--radius); padding:20px; text-align:center">
                 <p style="color:var(--gold-light); font-weight:600; margin-bottom:4px">Message Sent!</p>
@@ -224,9 +219,13 @@
             Sign up to be the first to know when new designs launch, limited drops release, and exclusive deals go live.
           </p>
         </div>
-        <form class="email-form reveal" style="--reveal-delay:.15s" action="#" method="post">
+        <form class="email-form reveal" style="--reveal-delay:.15s" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" aria-label="Email signup">
+          <input type="hidden" name="form-name" value="newsletter" />
+          <input type="hidden" name="subject" value="New Christos.Fashion email signup" />
+          <input type="hidden" name="source" value="Contact — Get Early Access" />
+          <input type="text" name="bot-field" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <label for="notify-email" class="sr-only">Email address</label>
-          <input type="email" id="notify-email" name="email" class="email-input" placeholder="Your email address" required />
+          <input type="email" id="notify-email" name="email" class="email-input" placeholder="Your email address" required autocomplete="email" />
           <button type="submit" class="email-submit">Notify Me</button>
         </form>
       </div>
@@ -240,7 +239,7 @@
         <div class="footer-brand"><img src="assets/christos-logo-gold.png" alt="Christos.Fashion" /><p>Modern Christian apparel for believers who wear their faith boldly and represent Christ every day.</p></div>
         <div class="footer-col"><h4>Shop</h4><ul><li><a href="shop.html">All Products</a></li><li><a href="shop.html?filter=shirts">T-Shirts</a></li><li><a href="shop.html?filter=hats">Hats</a></li></ul></div>
         <div class="footer-col"><h4>Info</h4><ul><li><a href="about.html">About Us</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li></ul></div>
-        <div class="footer-col footer-newsletter"><h4>Stay Connected</h4><p>Get early access to new drops.</p><form class="footer-form" action="#" method="post"><input type="email" class="footer-input" placeholder="Your email" required /><button type="submit" class="footer-submit">Subscribe</button></form></div>
+        <div class="footer-col footer-newsletter"><h4>Stay Connected</h4><p>Get early access to new drops.</p><form class="footer-form" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" aria-label="Footer email signup"><input type="hidden" name="form-name" value="newsletter" /><input type="hidden" name="subject" value="New Christos.Fashion email signup" /><input type="hidden" name="source" value="Contact — footer" /><input type="text" name="bot-field" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" /><label for="contact-footer-email" class="sr-only">Email address</label><input type="email" id="contact-footer-email" name="email" class="footer-input" placeholder="Your email" required autocomplete="email" /><button type="submit" class="footer-submit">Subscribe</button></form></div>
       </div>
       <div class="footer-scripture-bottom"><p>"He who began a good work in you will carry it to completion."</p><cite>Philippians 1:6</cite></div>
       <div class="footer-bottom"><p class="footer-copy">© <span id="year"></span> Christos.Fashion. All rights reserved.</p></div>
@@ -250,15 +249,34 @@
   <style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}</style>
 
   <script>
-    // Show success banner if Formspree redirected back with ?sent=true
-    if (new URLSearchParams(window.location.search).get('sent') === 'true') {
-      const banner = document.getElementById('form-success');
-      const btn    = document.querySelector('#contact-form button[type="submit"]');
-      if (banner) banner.style.display = 'block';
-      if (btn)    btn.style.display    = 'none';
-      // Clean URL so refreshing doesn't re-trigger
-      history.replaceState(null, '', window.location.pathname);
-    }
+    // Contact form — AJAX submit to Netlify Forms ("contact"),
+    // then show the inline success banner without leaving the page.
+    (function () {
+      const form = document.getElementById('contact-form');
+      if (!form) return;
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const banner = document.getElementById('form-success');
+        const btn    = form.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+        try {
+          const res = await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(new FormData(form)).toString(),
+          });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          if (banner) banner.style.display = 'block';
+          btn.style.display = 'none';
+          form.querySelectorAll('.form-group').forEach(g => g.style.display = 'none');
+        } catch (err) {
+          console.error('Contact form failed:', err);
+          btn.disabled = false;
+          btn.textContent = 'Try Again — Send Message';
+        }
+      });
+    })();
   </script>
   <script src="script.js"></script>
 </body>
