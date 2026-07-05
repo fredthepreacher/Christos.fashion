@@ -73,8 +73,12 @@ if (hamburger && drawer) {
 // ============================================================
 // PRODUCT FILTER TABS (Shop page)
 // ============================================================
+// NOTE: When the shop grid is rendered dynamically (js/shop-loader.js owns
+// #product-grid), that module also owns the filter tabs. This legacy block
+// only runs for static product grids, so the two never double-handle clicks
+// or show the "Coming Soon" state while products are still loading.
 const tabBtns = document.querySelectorAll('.tab-btn');
-if (tabBtns.length > 0) {
+if (tabBtns.length > 0 && !document.getElementById('product-grid')) {
   tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       // Update active state

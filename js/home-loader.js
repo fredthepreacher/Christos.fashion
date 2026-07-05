@@ -1,9 +1,9 @@
 import { Cart, CartUI } from './cart.js';
+import { openVariantPicker } from './variant-picker.js';
 
 CartUI.init();
 
 var allProducts = [];
-var pickerModal = null;
 
 document.addEventListener('DOMContentLoaded', function () {
   var grid = document.getElementById('featured-grid');
@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('/api/get-products')
     .then(function (res) { return res.ok ? res.json() : Promise.reject(res.status); })
     .then(function (products) {
+      if (!Array.isArray(products)) throw new Error('Bad products payload');
       allProducts = products;
       var featured = products.slice(0, 4);
 
@@ -58,23 +59,17 @@ document.addEventListener('DOMContentLoaded', function () {
         obs.observe(el);
       });
 
-      // Wire up buttons
+      // Wire up buttons + cards
       grid.querySelectorAll('.home-add-btn').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
           e.stopPropagation();
-          var p = allProducts.find(function (x) { return x.id === btn.dataset.productId; });
-          if (!p) return;
-          p.variants.length === 1 ? addVariant(p, p.variants[0]) : openPicker(p);
+          openFor(btn.dataset.productId);
         });
       });
-
-      // Clicking the card itself also opens the picker
       grid.querySelectorAll('.product-card').forEach(function (card) {
         card.addEventListener('click', function (e) {
           if (e.target.closest('button, a')) return;
-          var p = allProducts.find(function (x) { return x.id === card.dataset.productId; });
-          if (!p) return;
-          p.variants.length === 1 ? addVariant(p, p.variants[0]) : openPicker(p);
+          openFor(card.dataset.productId);
         });
       });
     })
@@ -83,78 +78,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// ── Variant picker ────────────────────────────────────────────
-
-function openPicker(product) {
-  if (!pickerModal) buildPickerDOM();
-
-  pickerModal.querySelector('.variant-modal-title').textContent = cleanTitle(product.title);
-
-  var groups   = pickerModal.querySelector('.variant-groups');
-  groups.innerHTML = '';
-  var selected = {};
-
-  product.options.forEach(function (opt) {
-    var groupEl = document.createElement('div');
-    groupEl.innerHTML =
-      '<div class="variant-group-label">' + esc(opt.name) + '</div>' +
-      '<div class="variant-btns"></div>';
-    var btnsEl = groupEl.querySelector('.variant-btns');
-
-    opt.values.forEach(function (val) {
-      var btn = document.createElement('button');
-      btn.className   = 'variant-btn';
-      btn.textContent = val.title;
-      btn.addEventListener('click', function () {
-        btnsEl.querySelectorAll('.variant-btn').forEach(function (b) { b.classList.remove('selected'); });
-        btn.classList.add('selected');
-        selected[opt.name] = val.id;
-      });
-      btnsEl.appendChild(btn);
-    });
-    groups.appendChild(groupEl);
-  });
-
-  var addBtn = pickerModal.querySelector('.variant-add-btn');
-  addBtn.textContent = 'Add to Cart';
-  addBtn.onclick = function () {
-    var variant = product.variants.find(function (v) {
-      return Object.values(selected).every(function (id) { return v.options.includes(id); });
-    });
-    if (!variant) {
-      addBtn.textContent = 'Select all options first';
-      setTimeout(function () { addBtn.textContent = 'Add to Cart'; }, 1800);
-      return;
-    }
-    addVariant(product, variant);
-    closePicker();
-  };
-
-  pickerModal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closePicker() {
-  if (pickerModal) pickerModal.classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function buildPickerDOM() {
-  var el = document.createElement('div');
-  el.className = 'variant-modal-overlay';
-  el.innerHTML =
-    '<div class="variant-modal" role="dialog" aria-modal="true">' +
-      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">' +
-        '<h3 class="variant-modal-title"></h3>' +
-        '<button class="variant-close" aria-label="Close">&times;</button>' +
-      '</div>' +
-      '<div class="variant-groups"></div>' +
-      '<button class="btn btn-primary variant-add-btn">Add to Cart</button>' +
-    '</div>';
-  el.querySelector('.variant-close').addEventListener('click', closePicker);
-  el.addEventListener('click', function (e) { if (e.target === el) closePicker(); });
-  document.body.appendChild(el);
-  pickerModal = el;
+function openFor(productId) {
+  var p = allProducts.find(function (x) { return x.id === productId; });
+  if (!p) return;
+  p.variants.length === 1
+    ? addVariant(p, p.variants[0])
+    : openVariantPicker(p, addVariant);
 }
 
 function addVariant(product, variant) {
@@ -174,8 +103,8 @@ function addVariant(product, variant) {
 function cleanTitle(raw) { return raw.split(' | ')[0].trim(); }
 
 function buildSubtitle(p) {
-  var colorOpt = p.options.find(function (o) { return o.type === 'color' || o.name.toLowerCase().includes('color'); });
-  var sizeOpt  = p.options.find(function (o) { return o.type === 'size'  || o.name.toLowerCase().includes('size'); });
+  var colorOpt = p.options.find(function (o) { return (o.type || '').toLowerCase() === 'color' || o.name.toLowerCase().includes('color'); });
+  var sizeOpt  = p.options.find(function (o) { return (o.type || '').toLowerCase() === 'size'  || o.name.toLowerCase().includes('size'); });
   var parts = [];
   if (colorOpt && colorOpt.values.length) {
     var c = colorOpt.values.map(function (v) { return v.title; });

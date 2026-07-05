@@ -1,4 +1,5 @@
 import { Cart, CartUI } from './cart.js';
+import { openVariantPicker } from './variant-picker.js';
 
 CartUI.init();
 
@@ -8,14 +9,22 @@ var noResults = document.getElementById('no-results');
 var tabBtns   = document.querySelectorAll('.tab-btn');
 
 var allProducts  = [];
+var loaded       = false;
 var activeFilter = 'all';
 
 function loadProducts() {
   fetch('/api/get-products')
     .then(function(res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
-    .then(function(products) { allProducts = products; renderGrid(allProducts); })
+    .then(function(products) {
+      if (!Array.isArray(products)) throw new Error('Bad products payload');
+      allProducts = products;
+      loaded = true;
+      renderGrid(allProducts);
+    })
     .catch(function(err) {
       console.error('Failed to load products:', err);
+      if (noResults) noResults.style.display = 'none';
+      if (countEl) countEl.textContent = '';
       grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px"><p class="eyebrow">Oops</p><h3 style="font-size:1.1rem;margin-block:12px;color:var(--cream)">Couldn\'t load products right now.</h3><p style="color:var(--cream-35)">Please refresh or try again in a moment.</p><button onclick="location.reload()" class="btn btn-outline" style="margin-top:20px">Retry</button></div>';
     });
 }
@@ -62,25 +71,35 @@ function renderGrid(products) {
   grid.querySelectorAll('.product-add-btn').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
-      var p = allProducts.find(function(x) { return x.id === btn.dataset.productId; });
-      if (p) p.variants.length === 1 ? addVariant(p, p.variants[0]) : openPicker(p);
+      openFor(btn.dataset.productId);
     });
   });
 
   grid.querySelectorAll('.product-card').forEach(function(card) {
     card.addEventListener('click', function(e) {
       if (e.target.closest('button,a')) return;
-      var p = allProducts.find(function(x) { return x.id === card.dataset.productId; });
-      if (p) p.variants.length === 1 ? addVariant(p, p.variants[0]) : openPicker(p);
+      openFor(card.dataset.productId);
     });
   });
+}
+
+function openFor(productId) {
+  var p = allProducts.find(function(x) { return x.id === productId; });
+  if (!p) return;
+  p.variants.length === 1
+    ? addVariant(p, p.variants[0])
+    : openVariantPicker(p, addVariant);
+}
+
+function addVariant(product, variant) {
+  Cart.add({ productId: product.id, variantId: variant.id, title: cleanTitle(product.title), variantTitle: variant.title, price: variant.price, image: product.image, quantity: 1 });
 }
 
 function cleanTitle(raw) { return raw.split(' | ')[0].trim(); }
 
 function buildSubtitle(p) {
-  var colorOpt = p.options.find(function(o) { return o.type === 'color' || o.name.toLowerCase().includes('color'); });
-  var sizeOpt  = p.options.find(function(o) { return o.type === 'size'  || o.name.toLowerCase().includes('size'); });
+  var colorOpt = p.options.find(function(o) { return (o.type || '').toLowerCase() === 'color' || o.name.toLowerCase().includes('color'); });
+  var sizeOpt  = p.options.find(function(o) { return (o.type || '').toLowerCase() === 'size'  || o.name.toLowerCase().includes('size'); });
   var parts = [];
   if (colorOpt && colorOpt.values.length) {
     var c = colorOpt.values.map(function(v){ return v.title; });
@@ -93,74 +112,25 @@ function buildSubtitle(p) {
   return parts.join(' · ');
 }
 
-var pickerModal = null;
-
-function openPicker(product) {
-  if (!pickerModal) {
-    var el = document.createElement('div');
-    el.className = 'variant-modal-overlay';
-    el.innerHTML = '<div class="variant-modal" role="dialog" aria-modal="true"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px"><h3 class="variant-modal-title"></h3><button class="variant-close" aria-label="Close">&times;</button></div><div class="variant-groups"></div><button class="btn btn-primary variant-add-btn">Add to Cart</button></div>';
-    el.querySelector('.variant-close').addEventListener('click', closePicker);
-    el.addEventListener('click', function(e) { if (e.target === el) closePicker(); });
-    document.body.appendChild(el);
-    pickerModal = el;
-  }
-
-  pickerModal.querySelector('.variant-modal-title').textContent = cleanTitle(product.title);
-  var groups = pickerModal.querySelector('.variant-groups');
-  groups.innerHTML = '';
-  var selected = {};
-
-  product.options.forEach(function(opt) {
-    var g = document.createElement('div');
-    g.innerHTML = '<div class="variant-group-label">' + esc(opt.name) + '</div><div class="variant-btns"></div>';
-    var btns = g.querySelector('.variant-btns');
-    opt.values.forEach(function(val) {
-      var b = document.createElement('button');
-      b.className = 'variant-btn';
-      b.textContent = val.title;
-      b.addEventListener('click', function() {
-        btns.querySelectorAll('.variant-btn').forEach(function(x){ x.classList.remove('selected'); });
-        b.classList.add('selected');
-        selected[opt.name] = val.id;
-      });
-      btns.appendChild(b);
-    });
-    groups.appendChild(g);
-  });
-
-  var addBtn = pickerModal.querySelector('.variant-add-btn');
-  addBtn.textContent = 'Add to Cart';
-  addBtn.onclick = function() {
-    var v = product.variants.find(function(v) {
-      return Object.values(selected).every(function(id){ return v.options.includes(id); });
-    });
-    if (!v) { addBtn.textContent = 'Select all options'; setTimeout(function(){ addBtn.textContent = 'Add to Cart'; }, 1800); return; }
-    addVariant(product, v);
-    closePicker();
-  };
-
-  pickerModal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closePicker() { if (pickerModal) pickerModal.classList.remove('open'); document.body.style.overflow = ''; }
-
-function addVariant(product, variant) {
-  Cart.add({ productId: product.id, variantId: variant.id, title: cleanTitle(product.title), variantTitle: variant.title, price: variant.price, image: product.image, quantity: 1 });
-}
-
+// ── Filter tabs (single owner — legacy handler in script.js is skipped) ──
 tabBtns.forEach(function(btn) {
   btn.addEventListener('click', function() {
     tabBtns.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
     btn.classList.add('active'); btn.setAttribute('aria-pressed','true');
     activeFilter = btn.dataset.filter;
-    renderGrid(allProducts);
+    if (loaded) renderGrid(allProducts);
   });
 });
 
 var urlFilter = new URLSearchParams(window.location.search).get('filter');
-if (urlFilter) { var mb = document.querySelector('.tab-btn[data-filter="' + urlFilter + '"]'); if (mb) mb.click(); }
+if (urlFilter) {
+  var mb = document.querySelector('.tab-btn[data-filter="' + urlFilter + '"]');
+  if (mb) {
+    tabBtns.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+    mb.classList.add('active'); mb.setAttribute('aria-pressed','true');
+    activeFilter = urlFilter;
+  }
+}
 
 var revealObs = new IntersectionObserver(function(entries) {
   entries.forEach(function(entry) {

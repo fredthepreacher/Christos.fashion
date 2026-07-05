@@ -45,34 +45,50 @@ exports.handler = async (event) => {
     const products = Array.isArray(json) ? json : (json.data || []);
     console.log('Products fetched:', products.length);
 
-    const slim = products.map(function(p) {
-      return {
-        id:          p.id,
-        title:       p.title,
-        description: p.description,
-        image:       p.images && p.images[0] ? p.images[0].src : null,
-        images:      (p.images || []).slice(0, 4).map(function(i) { return i.src; }),
-        variants:    (p.variants || []).filter(function(v) { return v.is_enabled; }).map(function(v) {
-          return {
-            id:      v.id,
-            title:   v.title,
-            price:   v.price,
-            sku:     v.sku,
-            options: v.options,
-            inStock: v.is_available,
-          };
-        }),
-        options: (p.options || []).map(function(o) {
-          return {
-            name:   o.name,
-            type:   o.type,
-            values: (o.values || []).map(function(v) { return { id: v.id, title: v.title }; }),
-          };
-        }),
-        tags:     p.tags || [],
-        category: tagToCategory(p.tags || []),
-      };
-    });
+    const slim = products
+      .filter(function(p) { return p.visible !== false; })
+      .map(function(p) {
+        // Keep only variants that are actually enabled in Printify
+        var enabledVariants = (p.variants || []).filter(function(v) { return v.is_enabled; });
+
+        // Collect the option-value IDs that appear in at least one enabled
+        // variant, so the frontend only shows real, purchasable options
+        // (not the entire blueprint catalog of colors/sizes).
+        var usedValueIds = {};
+        enabledVariants.forEach(function(v) {
+          (v.options || []).forEach(function(id) { usedValueIds[id] = true; });
+        });
+
+        return {
+          id:          p.id,
+          title:       p.title,
+          description: p.description,
+          image:       p.images && p.images[0] ? p.images[0].src : null,
+          images:      (p.images || []).slice(0, 4).map(function(i) { return i.src; }),
+          variants:    enabledVariants.map(function(v) {
+            return {
+              id:      v.id,
+              title:   v.title,
+              price:   v.price,
+              sku:     v.sku,
+              options: v.options,
+              inStock: v.is_available,
+            };
+          }),
+          options: (p.options || []).map(function(o) {
+            return {
+              name:   o.name,
+              type:   o.type,
+              values: (o.values || [])
+                .filter(function(v) { return usedValueIds[v.id]; })
+                .map(function(v) { return { id: v.id, title: v.title, colors: v.colors || null }; }),
+            };
+          }).filter(function(o) { return o.values.length > 0; }),
+          tags:     p.tags || [],
+          category: tagToCategory(p.tags || []),
+        };
+      })
+      .filter(function(p) { return p.variants.length > 0; });
 
     cache = { data: slim, at: Date.now() };
     return cors(200, JSON.stringify(slim));
