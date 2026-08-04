@@ -300,8 +300,8 @@
             </button>
 
             <p style="font-size:.75rem; color:var(--cream-35); text-align:center; margin-top:16px">
-              By placing your order you agree to our <a href="faq.html#terms" style="color:var(--gold)">Terms</a> and
-              <a href="faq.html#privacy" style="color:var(--gold)">Privacy Policy</a>.
+              By placing your order you agree to our <a href="terms.html" style="color:var(--gold)">Terms</a> and
+              <a href="privacy.html" style="color:var(--gold)">Privacy Policy</a>.
             </p>
           </div>
         </div>
@@ -337,6 +337,7 @@
     const cardEl   = elements.create('card', { hidePostalCode: true });
 
     let clientSecret = null;
+    let orderTotalCents = 0; // captured for conversion tracking on the success page
 
     // ── Boot ────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', async () => {
@@ -399,6 +400,7 @@
         if (!res.ok) throw new Error(data.error || 'Could not initialize payment');
 
         clientSecret = data.clientSecret;
+        orderTotalCents = data.totalCents;
 
         document.getElementById('summary-subtotal').textContent = fmt(data.subtotalCents);
         document.getElementById('summary-shipping').textContent =
@@ -449,8 +451,10 @@
       }
 
       if (paymentIntent.status === 'succeeded') {
+        const valueUSD = (orderTotalCents / 100).toFixed(2);
         Cart.clear();
-        window.location.href = `order-success.html?order=${paymentIntent.id}`;
+        window.location.href =
+          `order-success.html?order=${paymentIntent.id}&value=${valueUSD}&currency=USD`;
       }
     }
 

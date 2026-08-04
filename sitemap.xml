@@ -70,4 +70,20 @@
     <priority>0.5</priority>
   </url>
 
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://christos.fashion/privacy.html</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://christos.fashion/terms.html</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
 </urlset>
