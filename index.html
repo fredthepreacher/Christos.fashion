@@ -123,36 +123,75 @@
   <main id="main-content">
 
     <!-- ============================================================
-         HERO
+         HERO — brand story, not a product shelf
          ============================================================ -->
-    <section class="hero" aria-label="Hero">
-      <div class="hero-bg" aria-hidden="true"></div>
-      <div class="hero-grid-overlay" aria-hidden="true"></div>
-
+    <section class="hero-story" aria-label="Wear your faith boldly">
       <div class="container">
-        <div class="hero-content">
-          <p class="eyebrow hero-eyebrow reveal">Elevated Christian Apparel</p>
+        <div class="hero-story-inner">
 
-          <h1 class="hero-headline reveal" style="--reveal-delay:.1s">
-            <span class="line">Wear Your Faith</span>
-            <span class="line italic">Boldly.</span>
-          </h1>
+          <div class="hero-story-copy">
+            <p class="eyebrow reveal">A Movement of Believers</p>
 
-          <p class="hero-sub reveal" style="--reveal-delay:.2s">
-            Christian apparel designed for everyday believers — bold enough to start a conversation, clean enough to wear anywhere.
-          </p>
+            <h1 class="reveal" style="--reveal-delay:.08s">
+              You Were Never Meant<br>to Blend In.
+              <span class="italic">Wear Your Faith.</span>
+            </h1>
 
-          <div class="hero-actions reveal" style="--reveal-delay:.3s">
-            <a href="shop.html" class="btn btn-primary">
-              Shop the Collection <span class="btn-arrow" aria-hidden="true">→</span>
-            </a>
-            <a href="about.html" class="btn btn-outline">Our Mission</a>
+            <p class="hero-story-lede reveal" style="--reveal-delay:.18s">
+              Christos.Fashion isn't a clothing label. It's what you put on when you've
+              decided your faith belongs in every room you walk into — the office, the gym,
+              the grocery line. Bold enough to start the conversation. Refined enough to
+              wear anywhere.
+            </p>
+
+            <div class="hero-story-actions reveal" style="--reveal-delay:.28s">
+              <a href="shop.html" class="btn btn-primary">
+                Join the Movement <span class="btn-arrow" aria-hidden="true">→</span>
+              </a>
+              <a href="#story" class="btn btn-outline">Why We Exist</a>
+            </div>
+
+            <div class="hero-story-proof reveal" style="--reveal-delay:.38s">
+              <span><strong>Every design</strong> carries a message</span>
+              <span><strong>XS–5XL</strong> so nobody is left out</span>
+              <span><strong>Secure</strong> checkout</span>
+            </div>
           </div>
 
-          <div class="hero-scripture reveal" style="--reveal-delay:.45s">
-            <p>"I can do all things through Christ who strengthens me."</p>
-            <cite>Philippians 4:13</cite>
+          <!-- PHOTO SLOTS — drop real files at these paths and they
+               replace the placeholders automatically. See
+               CHRISTOS-FASHION-2.0-REPORT.md for the full shot list. -->
+          <div class="hero-collage reveal-scale" style="--reveal-delay:.2s">
+            <figure class="photo-slot photo-slot-portrait photo-slot-primary photo-frame-gold parallax" data-parallax-range="26">
+              <img src="assets/photos/hero-worship.jpg"
+                   alt="A believer with hands raised in worship, wearing a Christos.Fashion tee"
+                   width="1200" height="1500" fetchpriority="high" decoding="async" />
+              <figcaption class="photo-slot-mark">
+                <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+                <span class="photo-slot-label">Hero · Primary</span>
+                <span class="photo-slot-hint">Hands raised in worship. Warm low light, natural grain, face partly out of frame — reverent, not posed.</span>
+                <span class="photo-slot-path">assets/photos/hero-worship.jpg · 4:5 · 1200×1500</span>
+              </figcaption>
+            </figure>
+
+            <figure class="photo-slot photo-slot-square photo-slot-secondary parallax" data-parallax-range="-34">
+              <img src="assets/photos/hero-community.jpg"
+                   alt="Two friends in conversation, one wearing a Christos.Fashion shirt"
+                   width="800" height="800" loading="lazy" decoding="async" />
+              <figcaption class="photo-slot-mark">
+                <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+                <span class="photo-slot-label">Hero · Community</span>
+                <span class="photo-slot-hint">Two people mid-conversation, one wearing a tee. Candid.</span>
+                <span class="photo-slot-path">assets/photos/hero-community.jpg · 1:1 · 800×800</span>
+              </figcaption>
+            </figure>
           </div>
+
+        </div>
+
+        <div class="hero-story-scripture reveal" style="--reveal-delay:.5s">
+          <p>"For I am not ashamed of the gospel, for it is the power of God for salvation to everyone who believes."</p>
+          <cite>Romans 1:16</cite>
         </div>
       </div>
     </section>
@@ -206,14 +245,88 @@
     </div>
 
     <!-- ============================================================
+         CHAPTER I — WEAR YOUR FAITH (ivory act)
+         ============================================================ -->
+    <section class="section section-editorial surface-ivory" id="story" aria-labelledby="chapter-1-heading">
+      <div class="container">
+        <div class="chapter">
+
+          <div class="chapter-copy reveal-left">
+            <span class="chapter-number">Chapter I</span>
+            <p class="eyebrow">Wear Your Faith</p>
+            <h2 id="chapter-1-heading">Faith Was Never Meant<br><span class="title-italic">to Stay Quiet.</span></h2>
+            <p>
+              Most of us believe boldly on Sunday and go quiet by Tuesday. Not because our
+              faith shrank — because nobody asked. A shirt doesn't preach for you. But it
+              does something a sermon can't: it opens the door before you say a word.
+            </p>
+
+            <div class="chapter-points">
+              <div class="chapter-point">
+                <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+                <div>
+                  <strong>The message comes first</strong>
+                  <span>Every design starts as a truth worth saying out loud, then becomes a garment — never the other way around.</span>
+                </div>
+              </div>
+              <div class="chapter-point">
+                <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+                <div>
+                  <strong>Refined, not loud</strong>
+                  <span>Clean typography and considered placement, so it reads as intentional rather than as merch.</span>
+                </div>
+              </div>
+              <div class="chapter-point">
+                <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+                <div>
+                  <strong>Built for every body</strong>
+                  <span>XS through 5XL across the range, because nobody should be edged out of representing Christ.</span>
+                </div>
+              </div>
+            </div>
+
+            <a href="shop.html" class="btn btn-primary">See the Designs <span class="btn-arrow" aria-hidden="true">→</span></a>
+          </div>
+
+          <div class="chapter-media reveal-right">
+            <figure class="photo-slot photo-slot-landscape photo-frame-gold parallax" data-parallax-range="22">
+              <img src="assets/photos/chapter-conversation.jpg"
+                   alt="Two believers in conversation at a coffee shop, one wearing a faith-based graphic tee"
+                   width="1200" height="800" loading="lazy" decoding="async" />
+              <figcaption class="photo-slot-mark">
+                <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+                <span class="photo-slot-label">Chapter I · Conversation</span>
+                <span class="photo-slot-hint">Two people talking across a table, one in a Christos tee. Daylight, unstaged, mid-laugh.</span>
+                <span class="photo-slot-path">assets/photos/chapter-conversation.jpg · 3:2 · 1200×800</span>
+              </figcaption>
+            </figure>
+            <p class="photo-caption">Every shirt is a door someone else opens.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCRIPTURE SEPARATOR
+         ============================================================ -->
+    <section class="scripture-band scripture-band-burgundy reveal" aria-label="Scripture">
+      <div class="container">
+        <svg class="scripture-mark" viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+        <blockquote>"Let your light shine before others."</blockquote>
+        <cite>Matthew 5:16</cite>
+      </div>
+    </section>
+
+    <!-- ============================================================
          FEATURED COLLECTION
          ============================================================ -->
-    <section class="section" id="collection" aria-labelledby="collection-heading">
+    <section class="section section-editorial" id="collection" aria-labelledby="collection-heading">
       <div class="container">
-        <div class="section-header reveal">
+        <div class="section-header reveal" style="text-align:center">
           <p class="eyebrow">The Collection</p>
           <h2 id="collection-heading">Faith Essentials,<br><span class="title-italic">Designed to Be Worn.</span></h2>
-          <p style="max-width:560px; margin:16px auto 0; color:var(--cream-60); line-height:1.7">
+          <p class="section-lede">
             Every piece exists for one reason: to help you carry the gospel into everyday life.
             Premium Christian t-shirts and hats — secure checkout, quality print-on-demand apparel, easy ordering.
           </p>
@@ -347,31 +460,41 @@
     </section>
 
     <!-- ============================================================
-         MISSION SECTION
+         CHAPTER II — FAITH OVER FEAR
          ============================================================ -->
-    <section class="section mission-section" id="mission" aria-labelledby="mission-heading">
+    <section class="section section-editorial" id="mission" aria-labelledby="chapter-2-heading">
       <div class="container">
-        <div class="grid-2" style="align-items:center">
+        <div class="chapter chapter-reverse">
 
-          <div class="mission-left reveal">
-            <p class="eyebrow">About Christos.Fashion</p>
-            <h2 id="mission-heading">Faith Is Not Just Belief.<br><span class="title-italic">It Is Identity.</span></h2>
+          <div class="chapter-copy reveal-right">
+            <span class="chapter-number">Chapter II</span>
+            <p class="eyebrow">Faith Over Fear</p>
+            <h2 id="chapter-2-heading">The Hesitation Is Real.<br><span class="title-italic">So Is the Calling.</span></h2>
             <p>
-              Christos.Fashion was created for believers who want to carry their faith beyond Sunday.
-              Every design is intentional — crafted to encourage, inspire, and point people back to Jesus Christ.
+              There's a half-second before you put it on. <em>What if someone asks? What if I
+              don't have the right answer?</em> Every believer knows that pause. It isn't
+              weakness — it's the moment right before courage.
             </p>
             <p>
-              We believe clothing can be more than fashion. When you wear a message that matters,
-              it becomes a conversation. It becomes a witness. It becomes a statement of who you are and whose you are.
+              We design for that half-second. Wear it once and the fear gets smaller, because
+              you find out what most people actually do: they nod. They smile. Sometimes they
+              tell you what they're carrying, and you get to tell them Who carries you.
             </p>
-            <a href="about.html" class="btn btn-outline" style="margin-top:8px">Read Our Story <span class="btn-arrow" aria-hidden="true">→</span></a>
+            <a href="about.html" class="btn btn-outline">Read Our Story <span class="btn-arrow" aria-hidden="true">→</span></a>
           </div>
 
-          <div class="mission-right reveal" style="--reveal-delay:.15s">
-            <div class="scripture-card">
-              <blockquote>"For I am not ashamed of the Gospel of Christ, for it is the power of God to salvation."</blockquote>
-              <cite>Romans 1:16</cite>
-            </div>
+          <div class="chapter-media reveal-left">
+            <figure class="photo-slot photo-slot-portrait photo-frame-gold parallax" data-parallax-range="-24">
+              <img src="assets/photos/chapter-prayer.jpg"
+                   alt="A believer praying over an open Bible in morning light"
+                   width="1000" height="1250" loading="lazy" decoding="async" />
+              <figcaption class="photo-slot-mark">
+                <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+                <span class="photo-slot-label">Chapter II · Quiet Morning</span>
+                <span class="photo-slot-hint">Hands folded over an open Bible, early light across the page. Stillness over drama.</span>
+                <span class="photo-slot-path">assets/photos/chapter-prayer.jpg · 4:5 · 1000×1250</span>
+              </figcaption>
+            </figure>
           </div>
 
         </div>
@@ -379,14 +502,34 @@
     </section>
 
     <!-- ============================================================
+         MANIFESTO — Every Conversation Can Point Someone to Christ
+         ============================================================ -->
+    <section class="manifesto" aria-labelledby="manifesto-heading">
+      <div class="container">
+        <p class="eyebrow reveal">The Reason</p>
+        <h2 id="manifesto-heading" class="reveal" style="--reveal-delay:.08s">
+          Every Conversation Can Point <em>Someone to Christ.</em>
+        </h2>
+        <p class="reveal" style="--reveal-delay:.16s">
+          You will never know which one it was. The person behind you in line who read four
+          words on your back and thought about God for the first time in years. That's the
+          entire point of this brand. We make the opening line — you live the rest.
+        </p>
+        <div class="manifesto-actions reveal" style="--reveal-delay:.24s">
+          <a href="shop.html" class="btn btn-primary">Start the Conversation <span class="btn-arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
          WHAT IS CHRISTOS.FASHION — AEO / answer-engine section
          ============================================================ -->
-    <section class="section" id="what-is" aria-labelledby="what-is-heading" style="background:var(--surface-1); border-block:1px solid var(--border)">
+    <section class="section section-editorial surface-ivory" id="what-is" aria-labelledby="what-is-heading">
       <div class="container">
-        <div class="reveal" style="max-width:720px; margin-inline:auto; text-align:center">
+        <div class="reveal" style="max-width:760px; margin-inline:auto; text-align:center">
           <p class="eyebrow">The Brand</p>
           <h2 id="what-is-heading">What Is Christos.Fashion?</h2>
-          <p style="color:var(--cream-60); margin-top:16px; line-height:1.8">
+          <p class="section-lede">
             Christos.Fashion — also known as <strong style="color:var(--cream)">Christ Clothing</strong> — is an online
             Christian apparel brand for believers who want to wear their faith, not just talk about it.
             We design bold, gospel-centered clothing that starts conversations and points people to Jesus.
@@ -394,20 +537,20 @@
           </p>
         </div>
 
-        <div class="grid-3 values-grid" style="margin-top:48px">
-          <div class="value-card reveal">
+        <div class="grid-3 values-grid stagger" style="margin-top:64px">
+          <div class="value-card">
             <h3>Christian T-Shirts</h3>
             <p>Graphic tees with faith-forward messages like <em>Built by Faith</em>, <em>Pray. Work. Repeat.</em>,
             and <em>Work Hard, God First</em> — soft, durable cotton in sizes XS–5XL.</p>
             <a href="shop.html?filter=shirts" class="btn btn-ghost btn-sm" style="margin-top:12px">Shop Jesus Shirts <span class="btn-arrow" aria-hidden="true">→</span></a>
           </div>
-          <div class="value-card reveal" style="--reveal-delay:.1s">
+          <div class="value-card">
             <h3>Christian Hats</h3>
             <p>The <strong>Jesus Saves trucker hat</strong> — a clean snapback that carries the boldest two words
             in history. One size fits most, made for everyday wear.</p>
             <a href="shop.html?filter=hats" class="btn btn-ghost btn-sm" style="margin-top:12px">Shop Jesus Saves <span class="btn-arrow" aria-hidden="true">→</span></a>
           </div>
-          <div class="value-card reveal" style="--reveal-delay:.2s">
+          <div class="value-card">
             <h3>Why We're Different</h3>
             <p>The message comes first. Every design is a declaration, not a decoration — clothing made to open
             gospel conversations wherever you go.</p>
@@ -453,39 +596,265 @@
     </section>
 
     <!-- ============================================================
-         VALUES
+         BUILT FOR BELIEVERS — the three pillars
          ============================================================ -->
-    <section class="section values-section" aria-labelledby="values-heading">
+    <section class="section section-editorial surface-ivory" aria-labelledby="values-heading">
       <div class="container">
-        <div class="section-header reveal">
-          <p class="eyebrow">Why Christos.Fashion</p>
+        <div class="section-header reveal" style="text-align:center">
+          <p class="eyebrow">Built for Believers</p>
           <h2 id="values-heading">More Than a Brand.<br><span class="title-italic">A Mission.</span></h2>
+          <p class="section-lede">
+            Three commitments we hold ourselves to on every design, every print run, and every order that leaves our hands.
+          </p>
         </div>
 
-        <div class="values-grid">
-          <div class="value-card reveal">
-            <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M12 2l-8 6v14h6v-8h4v8h6V8z"/>
-            </svg>
+        <div class="pillars stagger">
+          <article class="pillar">
+            <span class="pillar-num">01</span>
             <h3>Faith First</h3>
-            <p>Every design starts with purpose, not aesthetics. The message is always the mission.</p>
+            <p>
+              Every design begins with a truth, not a trend. If it doesn't point somewhere
+              beyond us, it doesn't get printed — no matter how well it would sell.
+            </p>
+          </article>
+          <article class="pillar">
+            <span class="pillar-num">02</span>
+            <h3>Made to Last</h3>
+            <p>
+              Soft, durable cotton and print that survives the wash. This is meant to become
+              the shirt you reach for, not the one that fades to the back of the drawer.
+            </p>
+          </article>
+          <article class="pillar">
+            <span class="pillar-num">03</span>
+            <h3>Room for Everyone</h3>
+            <p>
+              XS through 5XL across the range. The Kingdom doesn't have a size limit, and
+              neither should the clothing that represents it.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SCRIPTURE SEPARATOR
+         ============================================================ -->
+    <section class="scripture-band reveal" aria-label="Scripture">
+      <div class="container">
+        <svg class="scripture-mark" viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+        <blockquote>"You are a chosen people, a royal priesthood."</blockquote>
+        <cite>1 Peter 2:9</cite>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMMUNITY — testimonies
+         ============================================================ -->
+    <section class="section section-editorial" id="community" aria-labelledby="community-heading">
+      <div class="container">
+        <div class="section-header reveal" style="text-align:center">
+          <p class="eyebrow">Represent the Kingdom</p>
+          <h2 id="community-heading">You're Not the Only One<br><span class="title-italic">Wearing It.</span></h2>
+          <p class="section-lede">
+            Believers across the country are putting these on and finding out what happens next.
+            These are a few of the conversations that followed.
+          </p>
+        </div>
+
+        <div class="testimony-grid stagger">
+          <figure class="testimony">
+            <span class="testimony-mark" aria-hidden="true">"</span>
+            <blockquote>
+              A woman at the gym stopped me and said her son had walked away from church.
+              We prayed right there by the treadmills. I've never had that happen over a T-shirt before.
+            </blockquote>
+            <figcaption class="testimony-author">
+              <span class="testimony-avatar" aria-hidden="true">M</span>
+              <span>
+                <cite>Marcus T.</cite>
+                <small>Wearing Faith Over Fear</small>
+              </span>
+            </figcaption>
+          </figure>
+
+          <figure class="testimony">
+            <span class="testimony-mark" aria-hidden="true">"</span>
+            <blockquote>
+              I bought <em>I Thought It Was Over</em> two weeks after losing my job. Wore it to
+              the interview I almost didn't go to. I start Monday.
+            </blockquote>
+            <figcaption class="testimony-author">
+              <span class="testimony-avatar" aria-hidden="true">D</span>
+              <span>
+                <cite>Danielle R.</cite>
+                <small>Wearing I Thought It Was Over</small>
+              </span>
+            </figcaption>
+          </figure>
+
+          <figure class="testimony">
+            <span class="testimony-mark" aria-hidden="true">"</span>
+            <blockquote>
+              My teenage son asked for the trucker hat. He wears it every single day. If two
+              words on a cap keep his faith in front of him, that's worth more than I paid.
+            </blockquote>
+            <figcaption class="testimony-author">
+              <span class="testimony-avatar" aria-hidden="true">J</span>
+              <span>
+                <cite>James O.</cite>
+                <small>Wearing Jesus Saves</small>
+              </span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMMUNITY — customer gallery
+         ============================================================ -->
+    <section class="section section-editorial surface-ivory" id="gallery" aria-labelledby="gallery-heading">
+      <div class="container">
+        <div class="section-header reveal" style="text-align:center">
+          <p class="eyebrow">Share Your Faith</p>
+          <h2 id="gallery-heading">The Community Gallery.</h2>
+          <p class="section-lede">
+            Tag <strong>#WearYourFaithBoldly</strong> and you might see yourself here. Real believers,
+            real days, real conversations.
+          </p>
+        </div>
+
+        <!-- PHOTO SLOTS — customer photos. Swap the src for approved
+             submissions; the placeholder shows until you do. -->
+        <div class="gallery-mosaic reveal">
+          <figure class="photo-slot gallery-feature">
+            <img src="assets/photos/community-01.jpg" alt="A customer wearing a Christos.Fashion tee at a church gathering" width="800" height="800" loading="lazy" decoding="async" />
+            <figcaption class="photo-slot-mark">
+              <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+              <span class="photo-slot-label">Gallery · Feature</span>
+              <span class="photo-slot-path">assets/photos/community-01.jpg · 1:1</span>
+            </figcaption>
+          </figure>
+          <figure class="photo-slot">
+            <img src="assets/photos/community-02.jpg" alt="A customer wearing a Christos.Fashion hat outdoors" width="600" height="600" loading="lazy" decoding="async" />
+            <figcaption class="photo-slot-mark">
+              <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+              <span class="photo-slot-path">community-02.jpg</span>
+            </figcaption>
+          </figure>
+          <figure class="photo-slot">
+            <img src="assets/photos/community-03.jpg" alt="A family in Christos.Fashion apparel" width="600" height="600" loading="lazy" decoding="async" />
+            <figcaption class="photo-slot-mark">
+              <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+              <span class="photo-slot-path">community-03.jpg</span>
+            </figcaption>
+          </figure>
+          <figure class="photo-slot">
+            <img src="assets/photos/community-04.jpg" alt="A believer serving in the community wearing Christos.Fashion" width="600" height="600" loading="lazy" decoding="async" />
+            <figcaption class="photo-slot-mark">
+              <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+              <span class="photo-slot-path">community-04.jpg</span>
+            </figcaption>
+          </figure>
+          <figure class="photo-slot">
+            <img src="assets/photos/community-05.jpg" alt="Friends at a worship night in Christos.Fashion apparel" width="600" height="600" loading="lazy" decoding="async" />
+            <figcaption class="photo-slot-mark">
+              <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+              <span class="photo-slot-path">community-05.jpg</span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="gallery-cta reveal">
+          <span class="gallery-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            #WearYourFaithBoldly
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMMUNITY — prayer wall
+         ============================================================ -->
+    <section class="section section-editorial" id="prayer" aria-labelledby="prayer-heading">
+      <div class="container">
+        <div class="prayer-wall">
+
+          <div class="prayer-copy reveal-left">
+            <p class="eyebrow">The Prayer Wall</p>
+            <h2 id="prayer-heading">Tell Us What<br><span class="title-italic">You're Carrying.</span></h2>
+            <p>
+              We're a clothing brand, but we're believers first. If something heavy is sitting on
+              you right now, send it here. Our team prays over every request that comes in.
+              You don't have to buy anything, and nothing you write is ever posted publicly.
+            </p>
+
+            <div class="prayer-promise">
+              <p>"Cast all your anxiety on him because he cares for you."</p>
+              <cite>1 Peter 5:7</cite>
+            </div>
           </div>
-          <div class="value-card reveal" style="--reveal-delay:.1s">
-            <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              <path d="M9 12l2 2 4-4"/>
-            </svg>
-            <h3>Premium Quality</h3>
-            <p>Print-on-demand through Printify means every piece holds its quality wash after wash.</p>
-          </div>
-          <div class="value-card reveal" style="--reveal-delay:.2s">
-            <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 8v4l3 3"/>
-            </svg>
-            <h3>Bold Identity</h3>
-            <p>Wear your belief with confidence. These designs are built to spark conversations and represent Christ boldly.</p>
-          </div>
+
+          <form class="prayer-form reveal-right"
+                name="prayer-request"
+                method="POST"
+                data-netlify="true"
+                netlify-honeypot="bot-field"
+                aria-labelledby="prayer-heading">
+            <input type="hidden" name="form-name" value="prayer-request" />
+            <input type="hidden" name="subject" value="New Christos.Fashion prayer request" />
+            <input type="text" name="bot-field" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prayer-name">First name <span class="sr-only">(optional)</span></label>
+                <input type="text" id="prayer-name" name="name" class="form-input" placeholder="Optional" autocomplete="given-name" />
+              </div>
+              <div class="form-group">
+                <label for="prayer-email">Email <span class="sr-only">(optional)</span></label>
+                <input type="email" id="prayer-email" name="email" class="form-input" placeholder="Optional" autocomplete="email" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="prayer-request-text">Your prayer request</label>
+              <textarea id="prayer-request-text" name="request" class="form-textarea" rows="6" required
+                        placeholder="Share as much or as little as you want. We'll pray over it either way."></textarea>
+            </div>
+
+            <div class="prayer-consent">
+              <input type="checkbox" id="prayer-followup" name="followup" value="yes" />
+              <label for="prayer-followup">It's okay to email me back to check in and pray with me.</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary prayer-submit">Send My Request</button>
+
+            <p class="form-status" role="status" aria-live="polite"></p>
+            <p class="prayer-note">Private and never published. No purchase, no newsletter, no catch.</p>
+          </form>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MOVEMENT CTA — the emotional ask
+         ============================================================ -->
+    <section class="movement-cta" aria-labelledby="movement-heading">
+      <div class="container">
+        <p class="eyebrow reveal">One Last Thing</p>
+        <h2 id="movement-heading" class="reveal" style="--reveal-delay:.08s">
+          You're Not Buying a Shirt.<br><em>You're Joining a Movement.</em>
+        </h2>
+        <p class="reveal" style="--reveal-delay:.16s">
+          Thousands of believers have decided their faith isn't a private matter. Pick the message
+          you're ready to carry, and wear it into the rooms only you can walk into.
+        </p>
+        <div class="movement-cta-actions reveal" style="--reveal-delay:.24s">
+          <a href="shop.html" class="btn btn-primary">Shop the Collection <span class="btn-arrow" aria-hidden="true">→</span></a>
+          <a href="about.html" class="btn btn-outline">Read Our Story</a>
         </div>
       </div>
     </section>
@@ -497,9 +866,9 @@
       <div class="container">
         <div class="reveal" style="text-align:center; max-width:520px; margin-inline:auto">
           <p class="eyebrow">Stay Connected</p>
-          <h2 id="email-heading">Join the Community.</h2>
+          <h2 id="email-heading">Walk With Us.</h2>
           <p style="color:var(--cream-60); margin-top:12px; line-height:1.75">
-            Get early access to new drops, faith-inspired content, and exclusive discounts sent straight to your inbox.
+            Early access to new drops, faith-inspired encouragement, and exclusive discounts — sent straight to your inbox.
           </p>
         </div>
         <form class="email-form reveal" style="--reveal-delay:.15s" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" aria-label="Email signup">
@@ -581,7 +950,7 @@
 
         <!-- Shop Links -->
         <div class="footer-col">
-          <h4>Shop</h4>
+          <h2 class="footer-heading">Shop</h2>
           <ul>
             <li><a href="shop.html">All Products</a></li>
             <li><a href="shop.html?filter=shirts">T-Shirts</a></li>
@@ -593,7 +962,7 @@
 
         <!-- Info Links -->
         <div class="footer-col">
-          <h4>Info</h4>
+          <h2 class="footer-heading">Info</h2>
           <ul>
             <li><a href="about.html">About Us</a></li>
             <li><a href="faq.html">FAQ</a></li>
@@ -605,7 +974,7 @@
 
         <!-- Newsletter -->
         <div class="footer-col footer-newsletter">
-          <h4>Get Early Access</h4>
+          <h2 class="footer-heading">Get Early Access</h2>
           <p>New drops and exclusive discounts delivered to your inbox.</p>
           <form class="footer-form" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" aria-label="Footer email signup">
             <input type="hidden" name="form-name" value="newsletter" />

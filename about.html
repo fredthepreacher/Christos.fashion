@@ -89,26 +89,34 @@
     </div>
 
     <!-- MISSION SECTION -->
-    <section class="section" aria-labelledby="mission-about-heading">
+    <section class="section section-editorial" aria-labelledby="mission-about-heading">
       <div class="container">
-        <div class="grid-2" style="align-items:center; gap:clamp(40px,8vw,100px)">
+        <div class="chapter">
 
-          <div class="reveal">
-            <div class="scripture-card">
-              <blockquote>"For I am not ashamed of the Gospel of Christ, for it is the power of God to salvation for everyone who believes."</blockquote>
-              <cite>Romans 1:16</cite>
-            </div>
+          <div class="chapter-media reveal-left">
+            <figure class="photo-slot photo-slot-portrait photo-frame-gold parallax" data-parallax-range="24">
+              <img src="assets/photos/about-founder.jpg"
+                   alt="The founder of Christos.Fashion holding a freshly printed tee"
+                   width="1000" height="1250" loading="lazy" decoding="async" />
+              <figcaption class="photo-slot-mark">
+                <svg viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+                <span class="photo-slot-label">About · Founder</span>
+                <span class="photo-slot-hint">The person behind the brand, holding a finished piece. Honest and unpolished beats a studio portrait here.</span>
+                <span class="photo-slot-path">assets/photos/about-founder.jpg · 4:5 · 1000×1250</span>
+              </figcaption>
+            </figure>
           </div>
 
-          <div class="about-story reveal" style="--reveal-delay:.1s; max-width:100%; margin:0">
+          <div class="chapter-copy reveal-right">
+            <span class="chapter-number">Our Mission</span>
             <p class="eyebrow">Why We Exist</p>
-            <h2 id="mission-about-heading" style="margin-bottom:20px">Our Mission</h2>
+            <h2 id="mission-about-heading">Clothing That Carries<br><span class="title-italic">More Than a Logo.</span></h2>
             <p>
               Christos.Fashion — also known as Christ Clothing — exists to create meaningful Christian apparel that helps believers wear their faith boldly,
               represent Christ daily, and share the message of the Gospel through modern, intentional design.
             </p>
             <p>
-              We believe that what you wear is a part of who you are. Every time you step out the door in a
+              What you wear is part of who you are. Every time you step out the door in a
               Christos.Fashion piece, you carry a message — one that points back to Jesus Christ.
             </p>
           </div>
@@ -117,8 +125,17 @@
       </div>
     </section>
 
+    <!-- SCRIPTURE SEPARATOR -->
+    <section class="scripture-band scripture-band-burgundy reveal" aria-label="Scripture">
+      <div class="container">
+        <svg class="scripture-mark" viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+        <blockquote>"For I am not ashamed of the gospel."</blockquote>
+        <cite>Romans 1:16</cite>
+      </div>
+    </section>
+
     <!-- STORY SECTION -->
-    <section class="section mission-section" aria-labelledby="story-heading">
+    <section class="section section-editorial surface-ivory" aria-labelledby="story-heading">
       <div class="container">
         <div class="about-story reveal" style="margin-inline:auto">
           <p class="eyebrow" style="text-align:center">The Story</p>
@@ -176,44 +193,56 @@
     </section>
 
     <!-- VALUES -->
-    <section class="section values-section" aria-labelledby="values-about-heading">
+    <section class="section section-editorial" aria-labelledby="values-about-heading">
       <div class="container">
-        <div class="section-header reveal">
+        <div class="section-header reveal" style="text-align:center">
           <p class="eyebrow">What We Stand For</p>
           <h2 id="values-about-heading">Our Values</h2>
+          <p class="section-lede">Three things that decide what gets made and what gets left on the cutting room floor.</p>
         </div>
-        <div class="values-grid">
-          <div class="value-card reveal">
-            <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        <div class="pillars stagger">
+          <article class="pillar">
+            <span class="pillar-num">01</span>
             <h3>Faith First</h3>
             <p>Every design begins with the message, not the market. We create from conviction, not just creativity.</p>
-          </div>
-          <div class="value-card reveal" style="--reveal-delay:.1s">
-            <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          </article>
+          <article class="pillar">
+            <span class="pillar-num">02</span>
             <h3>Authentic Quality</h3>
             <p>We care about what goes into the product — materials, printing, and finish — because the message deserves excellence.</p>
-          </div>
-          <div class="value-card reveal" style="--reveal-delay:.2s">
-            <svg class="value-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          </article>
+          <article class="pillar">
+            <span class="pillar-num">03</span>
             <h3>Gospel Outreach</h3>
             <p>Clothing is a platform. When someone asks about your shirt, that's an open door. We design to open doors.</p>
-          </div>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- SCRIPTURE -->
-    <section class="section" style="background:var(--surface-1); border-top:1px solid var(--border);" aria-label="Closing scripture">
+    <!-- SCRIPTURE SEPARATOR -->
+    <section class="scripture-band scripture-band-ivory reveal" aria-label="Closing scripture">
       <div class="container">
-        <div class="reveal" style="text-align:center; max-width:580px; margin-inline:auto">
-          <div class="scripture-card">
-            <blockquote>"Let your light shine before others, so that they may see your good works and give glory to your Father who is in heaven."</blockquote>
-            <cite>Matthew 5:16</cite>
-          </div>
-          <div style="margin-top:36px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap">
-            <a href="shop.html" class="btn btn-primary">Shop the Collection <span class="btn-arrow" aria-hidden="true">→</span></a>
-            <a href="contact.html" class="btn btn-outline">Get in Touch</a>
-          </div>
+        <svg class="scripture-mark" viewBox="0 0 20 28" fill="currentColor" aria-hidden="true"><rect x="8" y="0" width="4" height="28"/><rect x="0" y="8" width="20" height="4"/></svg>
+        <blockquote>"Let your light shine before others."</blockquote>
+        <cite>Matthew 5:16</cite>
+      </div>
+    </section>
+
+    <!-- MOVEMENT CTA -->
+    <section class="movement-cta" aria-labelledby="about-movement-heading">
+      <div class="container">
+        <p class="eyebrow reveal">Your Turn</p>
+        <h2 id="about-movement-heading" class="reveal" style="--reveal-delay:.08s">
+          That's Our Story.<br><em>Now Go Live Yours.</em>
+        </h2>
+        <p class="reveal" style="--reveal-delay:.16s">
+          The mission only works if believers actually wear it out into the world. Pick the message
+          that fits the season you're in.
+        </p>
+        <div class="movement-cta-actions reveal" style="--reveal-delay:.24s">
+          <a href="shop.html" class="btn btn-primary">Shop the Collection <span class="btn-arrow" aria-hidden="true">→</span></a>
+          <a href="contact.html" class="btn btn-outline">Get in Touch</a>
         </div>
       </div>
     </section>
@@ -224,9 +253,9 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand"><img src="assets/christos-logo-gold.png" alt="Christos.Fashion" /><p>Modern Christian apparel for believers who wear their faith boldly and represent Christ every day.</p><div class="footer-social"><a href="https://instagram.com/christos.fashion" target="_blank" rel="noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a><a href="https://tiktok.com/@christos.fashion" target="_blank" rel="noreferrer" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.5a8.23 8.23 0 004.81 1.54V6.59a4.85 4.85 0 01-1.04.1z"/></svg></a></div></div>
-        <div class="footer-col"><h4>Shop</h4><ul><li><a href="shop.html">All Products</a></li><li><a href="shop.html?filter=shirts">T-Shirts</a></li><li><a href="shop.html?filter=hats">Hats</a></li></ul></div>
-        <div class="footer-col"><h4>Info</h4><ul><li><a href="about.html">About Us</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li><li><a href="faq.html#shipping">Shipping</a></li></ul></div>
-        <div class="footer-col footer-newsletter"><h4>Stay Connected</h4><p>Get early access to new drops.</p><form class="footer-form" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" aria-label="Footer email signup"><input type="hidden" name="form-name" value="newsletter" /><input type="hidden" name="subject" value="New Christos.Fashion email signup" /><input type="hidden" name="source" value="About — footer" /><input type="text" name="bot-field" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" /><label for="about-footer-email" class="sr-only">Email address</label><input type="email" id="about-footer-email" name="email" class="footer-input" placeholder="Your email" required autocomplete="email" /><button type="submit" class="footer-submit">Subscribe</button></form></div>
+        <div class="footer-col"><h2 class="footer-heading">Shop</h2><ul><li><a href="shop.html">All Products</a></li><li><a href="shop.html?filter=shirts">T-Shirts</a></li><li><a href="shop.html?filter=hats">Hats</a></li></ul></div>
+        <div class="footer-col"><h2 class="footer-heading">Info</h2><ul><li><a href="about.html">About Us</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li><li><a href="faq.html#shipping">Shipping</a></li></ul></div>
+        <div class="footer-col footer-newsletter"><h2 class="footer-heading">Stay Connected</h2><p>Get early access to new drops.</p><form class="footer-form" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" aria-label="Footer email signup"><input type="hidden" name="form-name" value="newsletter" /><input type="hidden" name="subject" value="New Christos.Fashion email signup" /><input type="hidden" name="source" value="About — footer" /><input type="text" name="bot-field" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" /><label for="about-footer-email" class="sr-only">Email address</label><input type="email" id="about-footer-email" name="email" class="footer-input" placeholder="Your email" required autocomplete="email" /><button type="submit" class="footer-submit">Subscribe</button></form></div>
       </div>
       <div class="footer-scripture-bottom"><p>"He who began a good work in you will carry it to completion."</p><cite>Philippians 1:6</cite></div>
       <div class="footer-bottom"><p class="footer-copy">© <span id="year"></span> Christos.Fashion. All rights reserved.</p><div class="footer-bottom-links"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></div></div>

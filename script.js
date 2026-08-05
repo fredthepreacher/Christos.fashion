@@ -1,11 +1,20 @@
 // ============================================================
-// CHRISTOS.FASHION — Shared Scripts v4
-// Clean · Modern · Faith-Centered
+// CHRISTOS.FASHION — Shared Scripts v5 "2.0"
+// Reverent · Hopeful · Bold · Premium · Peaceful
 // ============================================================
+
+const prefersReducedMotion =
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ============================================================
 // SCROLL REVEAL
+// Covers the v4 `.reveal` fade-up plus the 2.0 directional,
+// scale, stagger, and word-rise primitives. One observer, so
+// adding a motion class to markup is all that's ever needed.
 // ============================================================
+const REVEAL_SELECTOR =
+  '.reveal, .reveal-left, .reveal-right, .reveal-scale, .stagger, .rise-words';
+
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -17,7 +26,77 @@ const revealObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+document.querySelectorAll(REVEAL_SELECTOR).forEach(el => revealObserver.observe(el));
+
+// Expose it so dynamically rendered content (product grids) can
+// opt into the same choreography instead of rolling its own.
+window.CFReveal = {
+  observe(root) {
+    (root || document).querySelectorAll(REVEAL_SELECTOR).forEach(el => {
+      if (!el.classList.contains('visible')) revealObserver.observe(el);
+    });
+  }
+};
+
+// ============================================================
+// WORD RISE — wrap headline words so each can rise on cue
+// ============================================================
+document.querySelectorAll('.rise-words').forEach(el => {
+  if (el.dataset.riseReady) return;
+  el.innerHTML = el.textContent
+    .trim()
+    .split(/\s+/)
+    .map(word => `<span class="word"><span>${word}</span></span>`)
+    .join(' ');
+  el.dataset.riseReady = 'true';
+});
+
+// ============================================================
+// GENTLE PARALLAX
+// Range is deliberately small (max ±--parallax-range, default
+// 40px) so the page still feels calm and nothing reflows.
+// ============================================================
+(function initParallax() {
+  const layers = Array.from(document.querySelectorAll('.parallax'));
+  if (!layers.length || prefersReducedMotion) return;
+
+  let ticking = false;
+
+  function update() {
+    const vh = window.innerHeight;
+    layers.forEach(layer => {
+      const rect = layer.getBoundingClientRect();
+      if (rect.bottom < -200 || rect.top > vh + 200) return;
+      const range = parseFloat(layer.dataset.parallaxRange || '40');
+      // -1 (below fold) → 1 (above fold)
+      const progress = (vh / 2 - (rect.top + rect.height / 2)) / (vh / 2 + rect.height / 2);
+      layer.style.setProperty('--parallax-y', (progress * range).toFixed(2) + 'px');
+    });
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
+})();
+
+// ============================================================
+// PHOTO SLOTS
+// Marks a slot empty when its file isn't there yet, so the
+// designed placeholder shows instead of a broken-image icon.
+// ============================================================
+document.querySelectorAll('.photo-slot img').forEach(img => {
+  const markEmpty = () => img.closest('.photo-slot')?.classList.add('is-empty');
+  if (img.complete && img.naturalWidth === 0) markEmpty();
+  img.addEventListener('error', markEmpty);
+});
 
 // ============================================================
 // NAVIGATION — Scroll State
@@ -154,6 +233,17 @@ document.querySelectorAll('.faq-q').forEach(btn => {
 // ============================================================
 // COUNTDOWN TIMER (Drop Banner)
 // ============================================================
+// ─────────────────────────────────────────────────────────────
+// SET YOUR REAL DROP DATE HERE (ISO 8601, local time).
+// This used to be "now + 7 days", which meant the timer reset on
+// every page load — a countdown that never actually ends reads as
+// a trick once a returning visitor notices, and trust is the whole
+// asset for this brand. A fixed date is honest and still urgent.
+// When the date passes, the banner swaps to a "live now" state
+// instead of sitting at 00:00:00:00.
+// ─────────────────────────────────────────────────────────────
+const DROP_DATE = '2026-09-12T10:00:00';
+
 function initCountdown() {
   const days  = document.getElementById('cd-days');
   const hours = document.getElementById('cd-hours');
@@ -162,11 +252,10 @@ function initCountdown() {
 
   if (!days || !hours || !mins || !secs) return;
 
-  // Set your real drop date here: new Date('2025-MM-DDTHH:MM:SS')
-  const dropDate = new Date();
-  dropDate.setDate(dropDate.getDate() + 7);
-  dropDate.setHours(dropDate.getHours() + 14);
-  dropDate.setMinutes(dropDate.getMinutes() + 33);
+  const dropDate = new Date(DROP_DATE);
+  if (isNaN(dropDate)) return;
+
+  const banner = days.closest('.drop-banner');
 
   const pad = n => String(n).padStart(2, '0');
   let prevSecs = '';
@@ -174,6 +263,15 @@ function initCountdown() {
   function tick() {
     const diff = dropDate - Date.now();
     if (diff <= 0) {
+      // The drop has landed — show it, don't show a dead clock.
+      if (banner) {
+        const countdown = banner.querySelector('.countdown');
+        const lede      = banner.querySelector('p:not(.eyebrow)');
+        const cta       = banner.querySelector('.btn');
+        if (countdown) countdown.style.display = 'none';
+        if (lede) lede.textContent = 'The capsule is live. Faith-rooted designs for the bold believer.';
+        if (cta) { cta.textContent = 'Shop the Drop'; cta.setAttribute('href', 'shop.html'); }
+      }
       days.textContent = hours.textContent = mins.textContent = secs.textContent = '00';
       return;
     }
@@ -254,6 +352,56 @@ document.querySelectorAll('.email-form, .footer-form').forEach(form => {
       btn.textContent = originalText;
       btn.disabled = false;
       btn.style.background = '';
+    }, 4000);
+  });
+});
+
+// ============================================================
+// PRAYER REQUEST FORM — Netlify Forms (AJAX + inline status)
+// Same pattern as the newsletter: posts to the Netlify form
+// named "prayer-request", with a honeypot and a no-JS fallback
+// to a native POST. Nothing is ever shown publicly.
+// ============================================================
+document.querySelectorAll('.prayer-form').forEach(form => {
+  const status = form.querySelector('.form-status');
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]');
+    const originalText = btn.textContent;
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    if (status) status.classList.remove('is-visible', 'is-success', 'is-error');
+
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString(),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      form.reset();
+      if (status) {
+        status.textContent =
+          'Received. Our team is praying over this today — you are not carrying it alone.';
+        status.classList.add('is-visible', 'is-success');
+      }
+      btn.textContent = '✓ Sent';
+    } catch (err) {
+      console.error('Prayer request failed:', err);
+      if (status) {
+        status.textContent =
+          "That didn't send. Please try again, or email hello@christos.fashion and we'll pray with you.";
+        status.classList.add('is-visible', 'is-error');
+      }
+      btn.textContent = 'Try again';
+    }
+
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.disabled = false;
     }, 4000);
   });
 });
