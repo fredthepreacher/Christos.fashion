@@ -260,7 +260,28 @@ Create the folder `assets/photos/` and add:
 
 - **Alt text:** every image has meaningful alt text, including all photo slots.
 - **Internal links:** all internal links and fragment anchors across the nine pages resolve. Fixed one pre-existing dead anchor — the footer "New Arrivals" link pointed at `shop.html#new`, which didn't exist on any page; the shop grid section now carries `id="new"`.
-- **Not verified in a live browser.** The sandbox couldn't reach a headless Chromium download, so everything above is static analysis, not a rendered screenshot. The remaining risk is purely visual layout, not correctness — but load the site locally before you deploy.
+### Post-deploy fix — hero headline overflow
+
+Measured on the live site after the first deploy and corrected.
+
+The hero headline was set to `clamp(3rem, 7vw, 5.6rem)`, inherited from the reasoning behind the page-wide `h1` scale. But the story hero puts the headline in a **~570px column, not the full 1200px container** — so at 1138px viewport it rendered at 79.7px and wrapped to **seven lines, 591px tall**. That consumed the entire viewport and pushed the lede, CTA buttons, proof row, and scripture below the fold. `text-wrap: balance` made the wrapping worse by fighting the authored `<br>` breaks.
+
+Fixed by scaling the headline to its column rather than the viewport:
+
+| | Before | After |
+|---|---|---|
+| Headline size | `clamp(3rem, 7vw, 5.6rem)` | `clamp(1.75rem, 3.4vw, 2.9rem)` |
+| Rendered at 1138px | 79.7px, 7 lines | 38.7px, 3 lines |
+| Hero height | 1396px | 818px |
+| Above the fold at 672px tall | eyebrow + headline only | everything through the proof row |
+
+The cap is a `rem` value deliberately: `.container` stops growing at 1200px, so a pure `vw` size keeps inflating past the column it has to fit inside. Also widened the copy column to `1.15fr`, tightened the hero's vertical rhythm, and added `@media (max-height: 820px) { .hero-story { min-height: auto } }` so laptops size the hero to content instead of stretching it to `100svh` and overflowing anyway.
+
+Verified live at 1138×672: 3 lines, no horizontal overflow, hero 818px.
+
+**Lesson worth keeping:** a component in a constrained column can't borrow the page-wide type scale. Check the container width, not the viewport width.
+
+- **Static analysis only for the rest.** The sandbox couldn't download a headless Chromium, so everything above except the hero fix is static analysis rather than rendered output. Worth a manual pass across breakpoints.
 - **Focus states:** the existing `:focus-visible` gold outline clears 3:1 in both modes.
 - **Reduced motion:** all new primitives disabled under `prefers-reduced-motion`.
 - **Semantics:** new sections use `<section aria-labelledby>`, testimonies use `<figure>`/`<blockquote>`/`<figcaption>`, product stories use `<dl>`. The prayer form status is `role="status" aria-live="polite"`.

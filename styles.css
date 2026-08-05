@@ -2049,10 +2049,17 @@ select:focus-visible {
   min-height: 100svh;
   display: flex;
   align-items: center;
-  padding-top: calc(var(--nav-h) + 40px);
-  padding-bottom: 72px;
+  padding-top: calc(var(--nav-h) + 28px);
+  padding-bottom: 56px;
   overflow: hidden;
   background: var(--grad-charcoal);
+}
+
+/* On short viewports (most laptops) a forced 100svh hero plus this much
+   content overflows anyway — let it size to its content instead of
+   stretching, so the fold lands after the proof row rather than mid-headline. */
+@media (max-height: 820px) {
+  .hero-story { min-height: auto; }
 }
 .hero-story::before {
   content: '';
@@ -2067,14 +2074,22 @@ select:focus-visible {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 1.05fr .95fr;
+  grid-template-columns: 1.15fr .85fr;
   align-items: center;
   gap: clamp(40px, 6vw, 88px);
 }
-.hero-story-copy { max-width: 620px; }
+.hero-story-copy { max-width: 660px; }
+
+/* The hero headline sits in a ~570px column, NOT the full container,
+   so it can't use the page-wide h1 scale — at 7vw it wrapped to seven
+   lines and pushed the CTAs below the fold. The cap is a rem value on
+   purpose: .container stops growing at 1200px, so a pure vw size keeps
+   inflating past the column it has to fit in. `text-wrap: normal`
+   because the line breaks are authored with <br>; `balance` fought them. */
 .hero-story-copy h1 {
-  margin-top: 22px;
-  font-size: clamp(3rem, 7vw, 5.6rem);
+  margin-top: 18px;
+  font-size: clamp(1.75rem, 3.4vw, 2.9rem);
+  text-wrap: normal;
 }
 .hero-story-copy h1 .italic {
   display: block;
@@ -2086,9 +2101,9 @@ select:focus-visible {
   color: transparent;
 }
 .hero-story-lede {
-  margin-top: 26px;
-  font-size: clamp(1.02rem, 1.5vw, 1.2rem);
-  line-height: 1.85;
+  margin-top: 22px;
+  font-size: clamp(.98rem, 1.25vw, 1.12rem);
+  line-height: 1.8;
   color: var(--cream-60);
   max-width: 52ch;
 }
@@ -2096,15 +2111,15 @@ select:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  margin-top: 36px;
+  margin-top: 30px;
 }
 .hero-story-proof {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 12px 26px;
-  margin-top: 40px;
-  padding-top: 26px;
+  margin-top: 32px;
+  padding-top: 22px;
   border-top: 1px solid var(--border);
 }
 .hero-story-proof span {
@@ -2130,7 +2145,7 @@ select:focus-visible {
 .hero-story-scripture {
   position: relative;
   z-index: 2;
-  margin-top: clamp(48px, 7vw, 76px);
+  margin-top: clamp(32px, 4vw, 56px);
   padding-top: 26px;
   border-top: 1px solid var(--border-gold);
   max-width: 620px;
