@@ -305,6 +305,30 @@ Breakpoints at 1024 / 900 / 640px for all new components. On mobile: chapters st
 
 ---
 
+## 8b. Photography integrated (5 Aug 2026)
+
+All ten lifestyle images are now in `assets/photos/` and wired to the slots. Every image matches its slot's aspect ratio **exactly** — measured native dimensions against the CSS `aspect-ratio` on each slot, and `object-fit: cover` discards 0% of every frame on desktop:
+
+| Image | Native | Slot | Crop loss |
+|---|---|---|---|
+| `hero-worship.jpg` | 1122×1402 | 4:5 portrait | 0% |
+| `hero-community.jpg` | 1254×1254 | 1:1 square | 0% |
+| `chapter-conversation.jpg` | 1536×1024 | 3:2 landscape | 0% |
+| `chapter-prayer.jpg` | 1122×1402 | 4:5 portrait | 0% |
+| `about-founder.jpg` | 1122×1402 | 4:5 portrait | 0% |
+| `community-01…05.jpg` | 1254×1254 | 1:1 gallery | 0% |
+
+Two defects found and fixed while integrating:
+
+1. **Placeholder specs stayed in the accessibility tree.** The `.photo-slot-mark` figcaption was only *covered* by the loaded image via `z-index`. Visually correct, but screen readers still announced `"assets/photos/hero-worship.jpg · 4:5 · 1200×1500"` as page content, and crawlers still counted it as body text. Now `script.js` adds `.is-filled` on successful load and the mark is `display: none` — removed from the render tree, not hidden behind something.
+2. **Mobile gallery feature cropped faces.** The `.gallery-feature` switched to `3:2` below 900px while its source is square — throwing away a third of the image top-and-bottom, exactly where faces sit. Changed to a full-width `1:1`.
+
+Trust strip now reads **Defect Support** rather than *Easy Returns* on `index.html` and `shop.html`.
+
+Integrations re-verified byte-identical after the swap: `cart.js`, `home-loader.js`, `shop-loader.js`, `variant-picker.js`, all three Netlify functions, `netlify.toml`, `checkout.html`, `sitemap.xml`, `robots.txt`.
+
+---
+
 ## 9. What still needs you
 
 | # | Item | Why it matters |

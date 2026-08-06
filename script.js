@@ -93,9 +93,21 @@ document.querySelectorAll('.rise-words').forEach(el => {
 // designed placeholder shows instead of a broken-image icon.
 // ============================================================
 document.querySelectorAll('.photo-slot img').forEach(img => {
-  const markEmpty = () => img.closest('.photo-slot')?.classList.add('is-empty');
-  if (img.complete && img.naturalWidth === 0) markEmpty();
+  const slot = img.closest('.photo-slot');
+  if (!slot) return;
+  const markEmpty  = () => { slot.classList.add('is-empty'); slot.classList.remove('is-filled'); };
+  // Once a real photo loads, retire the placeholder plate entirely. It used
+  // to only sit *behind* the image (z-index), which looked right but left the
+  // shot brief and file path in the accessibility tree and in the page's
+  // crawlable text — screen readers announced "assets/photos/hero-worship.jpg
+  // · 4:5 · 1200×1500" as if it were content.
+  const markFilled = () => { slot.classList.add('is-filled'); slot.classList.remove('is-empty'); };
+
+  if (img.complete) {
+    img.naturalWidth === 0 ? markEmpty() : markFilled();
+  }
   img.addEventListener('error', markEmpty);
+  img.addEventListener('load',  markFilled);
 });
 
 // ============================================================

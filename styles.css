@@ -2016,9 +2016,12 @@ select:focus-visible {
   word-break: break-all;
 }
 
-/* Once a real photo loads it covers the mark; if the file is
-   missing the onerror handler hides the img and the mark stays. */
+/* Once a real photo loads the mark is removed from the render tree —
+   not just covered — so its shot brief and file path stop being read
+   out by screen readers and stop counting as page text. If the file is
+   missing, the onerror handler hides the img and the mark stays. */
 .photo-slot.is-empty img { display: none; }
+.photo-slot.is-filled .photo-slot-mark { display: none; }
 
 /* Editorial framing devices */
 .photo-frame-gold { position: relative; }
@@ -2747,7 +2750,10 @@ select:focus-visible {
   .testimony-grid { grid-template-columns: 1fr; }
   .prayer-wall { grid-template-columns: 1fr; }
   .gallery-mosaic { grid-template-columns: repeat(2, 1fr); }
-  .gallery-mosaic .gallery-feature { grid-row: span 1; grid-column: span 2; aspect-ratio: 3 / 2; }
+  /* Kept at 1:1 on mobile. The 3:2 this used to be threw away a third of a
+     square source image top-and-bottom, which on a photo of people is exactly
+     where the faces are. Full-width square keeps it featured and uncropped. */
+  .gallery-mosaic .gallery-feature { grid-row: span 1; grid-column: span 2; aspect-ratio: 1 / 1; }
 }
 
 @media (max-width: 640px) {
