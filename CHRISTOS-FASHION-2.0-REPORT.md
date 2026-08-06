@@ -329,6 +329,27 @@ Integrations re-verified byte-identical after the swap: `cart.js`, `home-loader.
 
 ---
 
+## 8c. Product campaign imagery (6 Aug 2026)
+
+Second photo set — product-specific rather than generic lifestyle. Applied as a **merge, not a wholesale replace**, because the package was built from the repo state *before* the 8b fixes and would have rolled back three things:
+
+| File | Action | Reason |
+|---|---|---|
+| `index.html`, `about.html` | took package version | Better product-named alt text; placeholder `<figcaption>`s removed at source |
+| `assets/photos/*` (10) | took package version | New product campaign set |
+| `PRODUCT-CAMPAIGN-IMAGE-INTEGRATION.md`, `CLAUDE-DEPLOYMENT-INSTRUCTIONS.md` | added | Package notes |
+| `styles.css` | **kept repo version** | Package reverted the mobile gallery 1:1 crop fix back to 3:2 |
+| `script.js` | **kept repo version** | Package reverted the `.is-filled` load handler |
+| `CHRISTOS-FASHION-2.0-REPORT.md` | **kept repo version** | Package had the pre-8b copy of this report |
+
+The package solved the placeholder-caption problem a better way than 8b did — it deleted the `<figcaption>` blocks from the HTML entirely, rather than hiding them at runtime. The `.is-filled` handler is now defensive only; `is-empty` still suppresses a broken-image icon if a file ever goes missing, so it earns its place.
+
+Alt text is now product-specific throughout, e.g. *"A believer wearing the Built by Faith shirt with hands raised at golden hour"* — better for both screen readers and image search than the generic descriptions it replaced.
+
+Crop re-measured against the new files: every image matches its slot exactly, **0% crop loss on desktop and mobile**.
+
+---
+
 ## 9. What still needs you
 
 | # | Item | Why it matters |
