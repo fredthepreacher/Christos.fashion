@@ -2,8 +2,11 @@
   "name": "christos-fashion",
   "version": "1.0.0",
   "private": true,
-  "description": "Christos.Fashion — Printify + Stripe storefront on Netlify",
+  "description": "Christos.Fashion \u2014 Printify + Stripe storefront on Netlify",
   "dependencies": {
     "stripe": "^14.0.0"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }

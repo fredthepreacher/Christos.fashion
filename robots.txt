@@ -1,13 +1,11 @@
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://christos.fashion/sitemap.xml
-
-# Keep transactional pages out of search results
-Disallow: /checkout.html
-Disallow: /order-success.html
-
-# Block access to any admin or private files if added later
+# Let search engines crawl checkout/success URLs so their meta noindex directives can be seen.
+# Keep implementation endpoints and private/admin paths out of crawl queues.
+Disallow: /api/
+Disallow: /.netlify/
 Disallow: /admin/
 Disallow: /.env
+
+Sitemap: https://christos.fashion/sitemap.xml

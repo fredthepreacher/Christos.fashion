@@ -3,10 +3,37 @@
   publish   = "."
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "22"
 
 [functions]
   node_bundler = "esbuild"
+
+# Crawlable product and collection pages rendered server-side from Printify
+[[redirects]]
+  from   = "/products/*"
+  to     = "/.netlify/functions/product-page?slug=:splat"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/collections/*"
+  to     = "/.netlify/functions/collection-page?slug=:splat"
+  status = 200
+  force  = true
+
+# Google Merchant Center scheduled-feed endpoint
+[[redirects]]
+  from   = "/merchant-feed.xml"
+  to     = "/.netlify/functions/merchant-feed"
+  status = 200
+  force  = true
+
+# Dynamic sitemap includes current live Printify product URLs
+[[redirects]]
+  from   = "/sitemap.xml"
+  to     = "/.netlify/functions/sitemap"
+  status = 200
+  force  = true
 
 # Redirect all /api/* calls to the matching Netlify Function
 [[redirects]]
@@ -15,10 +42,41 @@
   status = 200
 
 # Cache static assets
+#
+# `immutable` is only safe when the filename changes whenever the bytes do
+# (content hashing). These filenames are stable and the photo set has already
+# been swapped twice at the same ten paths — so a one-year immutable policy
+# pinned returning visitors to whichever set they cached first, with no way
+# to revalidate. Split the rule: keep the aggressive policy for artwork that
+# genuinely never changes, and let the campaign photos revalidate.
+
+# Ordered general -> specific on purpose. Netlify applies every matching
+# rule, so the later, narrower rule must come last to win.
+
+# Default for anything under /assets: cache a day, then revalidate.
 [[headers]]
   for = "/assets/*"
   [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+# Logo and design artwork — filename stable AND content stable, so the
+# aggressive immutable policy is genuinely safe here.
+[[headers]]
+  for = "/assets/*.png"
+  [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/designs/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Campaign photography — swapped periodically at fixed paths, so it MUST
+# revalidate. One hour of hard caching, then a cheap ETag 304 per visit.
+[[headers]]
+  for = "/assets/photos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
 
 [[headers]]
   for = "/*.html"
@@ -27,3 +85,18 @@
     X-Frame-Options       = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy       = "strict-origin-when-cross-origin"
+
+# Dynamic commerce pages — allow short CDN caching with revalidation
+[[headers]]
+  for = "/products/*"
+  [headers.values]
+    Cache-Control = "public, max-age=60, must-revalidate"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/collections/*"
+  [headers.values]
+    Cache-Control = "public, max-age=60, must-revalidate"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

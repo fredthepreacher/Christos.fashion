@@ -1,142 +1,29 @@
-const PRINTIFY_BASE = 'https://api.printify.com/v1';
-
-let cache = { data: null, at: 0 };
-const CACHE_TTL_MS = 5 * 60 * 1000;
-
-// Storefront display overrides. Printify titles/descriptions are sometimes
-// generic (e.g. "Trucker Caps"); these make them clear and search-friendly
-// without touching the Printify catalog. Orders still use the real
-// product/variant IDs, so fulfillment is unaffected.
-const PRODUCT_OVERRIDES = {
-  '6a431946030b9049f40d7dc5': {
-    title: 'Jesus Saves Trucker Hat | Christian Snapback Cap',
-    description:
-      'Wear the boldest two words in history. The Jesus Saves trucker hat pairs a clean, ' +
-      'structured foam front with a breathable mesh back — a classic snapback silhouette ' +
-      'built for everyday wear. The design points to one message: Jesus saves. Wear it to ' +
-      'church, on the job, at the gym, or anywhere a conversation might start.<br/><br/>' +
-      'Product features<br/>' +
-      '- 100% polyester foam front with nylon mesh back for all-day comfort<br/>' +
-      '- One size fits most (22.8" / 58 cm) with adjustable snapback closure<br/>' +
-      '- Six-row stitched visor for a durable, structured shape<br/>' +
-      '- Faith-centered Jesus Saves design — a Christian hat made to be noticed',
-  },
-};
+const { fetchCatalog } = require('../lib/catalog');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return cors(204, '');
   if (event.httpMethod !== 'GET') return cors(405, JSON.stringify({ error: 'Method not allowed' }));
 
-  const { PRINTIFY_API_KEY, PRINTIFY_SHOP_ID } = process.env;
-
-  if (!PRINTIFY_API_KEY || !PRINTIFY_SHOP_ID) {
-    const missing = [
-      !PRINTIFY_API_KEY && 'PRINTIFY_API_KEY',
-      !PRINTIFY_SHOP_ID && 'PRINTIFY_SHOP_ID'
-    ].filter(Boolean).join(', ');
-    console.error('Missing env vars:', missing);
-    return cors(500, JSON.stringify({ error: 'Server misconfiguration', missing }));
-  }
-
-  if (cache.data && Date.now() - cache.at < CACHE_TTL_MS) {
-    return cors(200, JSON.stringify(cache.data));
-  }
-
   try {
-    console.log('Fetching products for shop:', PRINTIFY_SHOP_ID);
-
-    const response = await fetch(
-      `${PRINTIFY_BASE}/shops/${PRINTIFY_SHOP_ID}/products.json?limit=50`,
-      {
-        headers: {
-          Authorization: `Bearer ${PRINTIFY_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    if (!response.ok) {
-      const text = await response.text();
-      console.error('Printify error:', response.status, text);
-      return cors(502, JSON.stringify({ error: 'Printify API error', status: response.status, detail: text }));
-    }
-
-    const json = await response.json();
-    const products = Array.isArray(json) ? json : (json.data || []);
-    console.log('Products fetched:', products.length);
-
-    const slim = products
-      .filter(function(p) { return p.visible !== false; })
-      .map(function(p) {
-        // Keep only variants that are actually enabled in Printify
-        var enabledVariants = (p.variants || []).filter(function(v) { return v.is_enabled; });
-
-        // Collect the option-value IDs that appear in at least one enabled
-        // variant, so the frontend only shows real, purchasable options
-        // (not the entire blueprint catalog of colors/sizes).
-        var usedValueIds = {};
-        enabledVariants.forEach(function(v) {
-          (v.options || []).forEach(function(id) { usedValueIds[id] = true; });
-        });
-
-        var ov = PRODUCT_OVERRIDES[p.id] || {};
-
-        return {
-          id:          p.id,
-          title:       ov.title || p.title,
-          description: ov.description || p.description,
-          image:       p.images && p.images[0] ? p.images[0].src : null,
-          images:      (p.images || []).slice(0, 4).map(function(i) { return i.src; }),
-          variants:    enabledVariants.map(function(v) {
-            return {
-              id:      v.id,
-              title:   v.title,
-              price:   v.price,
-              sku:     v.sku,
-              options: v.options,
-              inStock: v.is_available,
-            };
-          }),
-          options: (p.options || []).map(function(o) {
-            return {
-              name:   o.name,
-              type:   o.type,
-              values: (o.values || [])
-                .filter(function(v) { return usedValueIds[v.id]; })
-                .map(function(v) { return { id: v.id, title: v.title, colors: v.colors || null }; }),
-            };
-          }).filter(function(o) { return o.values.length > 0; }),
-          tags:     p.tags || [],
-          category: tagToCategory(p.tags || []),
-        };
-      })
-      .filter(function(p) { return p.variants.length > 0; });
-
-    cache = { data: slim, at: Date.now() };
-    return cors(200, JSON.stringify(slim));
-
+    const products = await fetchCatalog(process.env);
+    return cors(200, JSON.stringify(products));
   } catch (err) {
     console.error('get-products error:', err.message);
-    return cors(500, JSON.stringify({ error: 'Internal server error', detail: err.message }));
+    const status = err.code === 'MISCONFIGURED' ? 500 : 502;
+    return cors(status, JSON.stringify({ error: status === 500 ? 'Server misconfiguration' : 'Product catalog unavailable' }));
   }
 };
-
-function tagToCategory(tags) {
-  var t = tags.map(function(s) { return s.toLowerCase(); });
-  if (t.some(function(s) { return s.includes('hat') || s.includes('cap') || s.includes('snapback'); })) return 'hats';
-  if (t.some(function(s) { return s.includes('hoodie') || s.includes('sweatshirt'); })) return 'hoodies';
-  return 'shirts';
-}
 
 function cors(status, body) {
   return {
     statusCode: status,
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'Content-Type',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Cache-Control': status === 200 ? 'public, max-age=60, s-maxage=300, stale-while-revalidate=600' : 'no-store',
     },
-    body: typeof body === 'string' ? body : JSON.stringify(body),
+    body,
   };
 }

@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary SEO -->
-  <title>Christos.Fashion | Christian Apparel — Jesus Shirts & Christian Hats</title>
-  <meta name="description" content="Christos.Fashion (Christ Clothing) is a premium Christian apparel brand. Shop bold faith-based clothing — Christian graphic tees, the Jesus Saves trucker hat, and gospel-centered streetwear made to spark conversations." />
+  <title>Christos.Fashion | Christian Shirts, Hats & Faith Apparel</title>
+  <meta name="description" content="Shop Christian shirts, Jesus Saves hats, Faith Over Fear apparel, and the Therapy Collection from Christos.Fashion. Wear your faith boldly." />
   <meta name="keywords" content="Christian clothing, Christian apparel, faith-based clothing, Christian t-shirts, Jesus shirts, Jesus Saves hat, Christian hats, gospel clothing, Christian streetwear, Bible verse apparel, Christian graphic tees, faith apparel brand" />
   <link rel="canonical" href="https://christos.fashion/" />
   <meta name="theme-color" content="#0a0a0a" />
@@ -74,6 +74,7 @@
     "url": "https://christos.fashion"
   }
   </script>
+  <script src="/js/analytics.js" defer></script>
 </head>
 <body>
 
@@ -161,13 +162,13 @@
           <!-- CHRISTOS.FASHION PRODUCT CAMPAIGN PHOTOGRAPHY -->
           <div class="hero-collage reveal-scale" style="--reveal-delay:.2s">
             <figure class="photo-slot photo-slot-portrait photo-slot-primary photo-frame-gold parallax" data-parallax-range="26">
-              <img src="assets/photos/hero-worship.jpg"
+              <img src="assets/photos/hero-worship.jpg?v=2"
                    alt="A believer wearing the Built by Faith shirt with hands raised at golden hour"
                    width="1200" height="1500" fetchpriority="high" decoding="async" />
             </figure>
 
             <figure class="photo-slot photo-slot-square photo-slot-secondary parallax" data-parallax-range="-34">
-              <img src="assets/photos/hero-community.jpg"
+              <img src="assets/photos/hero-community.jpg?v=2"
                    alt="Two friends wearing Work Hard, God First and Faith Over Fear shirts sharing a conversation"
                    width="800" height="800" loading="lazy" decoding="async" />
             </figure>
@@ -276,7 +277,7 @@
 
           <div class="chapter-media reveal-right">
             <figure class="photo-slot photo-slot-landscape photo-frame-gold parallax" data-parallax-range="22">
-              <img src="assets/photos/chapter-conversation.jpg"
+              <img src="assets/photos/chapter-conversation.jpg?v=2"
                    alt="Two believers in conversation at a coffee shop, one wearing a faith-based graphic tee"
                    width="1200" height="800" loading="lazy" decoding="async" />
             </figure>
@@ -338,7 +339,7 @@
                   <meta itemprop="priceCurrency" content="USD" />
                   <link itemprop="availability" href="https://schema.org/InStock" />
                 </strong>
-                <a href="shop.html?filter=shirts" class="btn btn-ghost btn-sm" aria-label="View Built by Faith T-Shirt in the shop">View <span class="btn-arrow" aria-hidden="true">→</span></a>
+                <a href="/products/built-by-faith" class="btn btn-ghost btn-sm" aria-label="View Built by Faith T-Shirt">View <span class="btn-arrow" aria-hidden="true">→</span></a>
               </div>
             </div>
           </article>
@@ -367,7 +368,7 @@
                   <meta itemprop="priceCurrency" content="USD" />
                   <link itemprop="availability" href="https://schema.org/InStock" />
                 </strong>
-                <a href="shop.html?filter=hats" class="btn btn-ghost btn-sm" aria-label="View the Jesus Saves trucker hat in the shop">View <span class="btn-arrow" aria-hidden="true">→</span></a>
+                <a href="/products/jesus-saves" class="btn btn-ghost btn-sm" aria-label="View the Jesus Saves trucker hat">View <span class="btn-arrow" aria-hidden="true">→</span></a>
               </div>
             </div>
           </article>
@@ -395,7 +396,7 @@
                   <meta itemprop="priceCurrency" content="USD" />
                   <link itemprop="availability" href="https://schema.org/InStock" />
                 </strong>
-                <a href="shop.html?filter=shirts" class="btn btn-ghost btn-sm" aria-label="View Pray Work Repeat Tee in the shop">View <span class="btn-arrow" aria-hidden="true">→</span></a>
+                <a href="/products/pray-work-repeat" class="btn btn-ghost btn-sm" aria-label="View Pray Work Repeat Tee">View <span class="btn-arrow" aria-hidden="true">→</span></a>
               </div>
             </div>
           </article>
@@ -424,7 +425,7 @@
                   <meta itemprop="priceCurrency" content="USD" />
                   <link itemprop="availability" href="https://schema.org/InStock" />
                 </strong>
-                <a href="shop.html?filter=shirts" class="btn btn-ghost btn-sm" aria-label="View I Thought It Was Over God T-Shirt in the shop">View <span class="btn-arrow" aria-hidden="true">→</span></a>
+                <a href="/products/i-thought-it-was-over" class="btn btn-ghost btn-sm" aria-label="View I Thought It Was Over God T-Shirt">View <span class="btn-arrow" aria-hidden="true">→</span></a>
               </div>
             </div>
           </article>
@@ -436,6 +437,29 @@
             View Full Collection <span class="btn-arrow" aria-hidden="true">→</span>
           </a>
         </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         THE THERAPY COLLECTION — targeted search + campaign landing path
+         ============================================================ -->
+    <section class="section section-editorial therapy-collection-section surface-ivory" id="therapy-collection" aria-labelledby="therapy-heading">
+      <div class="container">
+        <div class="section-header reveal" style="text-align:center">
+          <p class="eyebrow">The Therapy Collection</p>
+          <h2 id="therapy-heading">Faith for the Battles<br><span class="title-italic">No One Else Can See.</span></h2>
+          <p class="section-lede">Five declarations built around Scripture, prayer, God, Jesus, and Christ — designed as visible reminders of where believers turn for truth, hope, peace, and strength.</p>
+        </div>
+        <div class="therapy-art-grid" aria-label="Therapy Collection designs">
+          <a class="therapy-art-card reveal" href="/products/scripture-is-my-therapy"><img src="assets/designs/scripture-is-my-therapy.png" alt="Scripture Is My Therapy Christian design" loading="lazy" decoding="async"><span>Scripture Is My Therapy</span></a>
+          <a class="therapy-art-card reveal" href="/products/jesus-is-my-therapy"><img src="assets/designs/jesus-is-my-therapy.png" alt="Jesus Is My Therapy Christian design" loading="lazy" decoding="async"><span>Jesus Is My Therapy</span></a>
+          <a class="therapy-art-card reveal" href="/products/god-is-my-therapy"><img src="assets/designs/god-is-my-therapy.png" alt="God Is My Therapy Christian design" loading="lazy" decoding="async"><span>God Is My Therapy</span></a>
+          <a class="therapy-art-card reveal" href="/products/prayer-is-my-therapy"><img src="assets/designs/prayer-is-my-therapy.png" alt="Prayer Is My Therapy Christian design" loading="lazy" decoding="async"><span>Prayer Is My Therapy</span></a>
+          <a class="therapy-art-card reveal" href="/products/christ-is-my-therapy"><img src="assets/designs/christ-is-my-therapy.png" alt="Christ Is My Therapy Christian design" loading="lazy" decoding="async"><span>Christ Is My Therapy</span></a>
+        </div>
+        <div class="product-grid therapy-live-grid" id="therapy-product-grid" aria-live="polite"></div>
+        <div class="reveal therapy-actions"><a href="/collections/therapy" class="btn btn-primary">Shop the Therapy Collection <span class="btn-arrow" aria-hidden="true">→</span></a><a href="shop.html?filter=therapy" class="btn btn-outline">View Therapy Products in Shop</a></div>
+        <p class="therapy-context-note reveal"><strong>Faith and appropriate care can coexist.</strong> These designs express spiritual dependence and encouragement; they are not medical claims or a substitute for professional mental-health care.</p>
       </div>
     </section>
 
@@ -465,7 +489,7 @@
 
           <div class="chapter-media reveal-left">
             <figure class="photo-slot photo-slot-portrait photo-frame-gold parallax" data-parallax-range="-24">
-              <img src="assets/photos/chapter-prayer.jpg"
+              <img src="assets/photos/chapter-prayer.jpg?v=2"
                    alt="A believer praying over an open Bible in morning light"
                    width="1000" height="1250" loading="lazy" decoding="async" />
             </figure>
@@ -520,9 +544,8 @@
           </div>
           <div class="value-card">
             <h3>Christian Hats</h3>
-            <p>The <strong>Jesus Saves trucker hat</strong> — a clean snapback that carries the boldest two words
-            in history. One size fits most, made for everyday wear.</p>
-            <a href="shop.html?filter=hats" class="btn btn-ghost btn-sm" style="margin-top:12px">Shop Jesus Saves <span class="btn-arrow" aria-hidden="true">→</span></a>
+            <p>Statement hats led by <strong>Jesus Saves</strong> and the <strong>Therapy Collection</strong> — faith-centered messages designed for everyday wear and conversation.</p>
+            <a href="/collections/christian-hats" class="btn btn-ghost btn-sm" style="margin-top:12px">Shop Christian Hats <span class="btn-arrow" aria-hidden="true">→</span></a>
           </div>
           <div class="value-card">
             <h3>Why We're Different</h3>
@@ -535,37 +558,14 @@
     </section>
 
     <!-- ============================================================
-         DROP BANNER / COUNTDOWN
+         NEXT DROP — honest early-access invitation, no false scarcity
          ============================================================ -->
     <section class="drop-banner reveal" aria-labelledby="drop-heading">
       <div class="container" style="position:relative;z-index:1">
-        <p class="eyebrow">Limited Edition</p>
+        <p class="eyebrow">Next Drop</p>
         <h2 id="drop-heading">Christ Over Culture.</h2>
-        <p>A new capsule collection is dropping soon. Faith-rooted designs for the bold believer.</p>
-
-        <div class="countdown" role="timer" aria-label="Countdown to drop">
-          <div class="countdown-unit">
-            <span id="cd-days"  class="cd-num">07</span>
-            <small>Days</small>
-          </div>
-          <div class="countdown-sep" aria-hidden="true">:</div>
-          <div class="countdown-unit">
-            <span id="cd-hours" class="cd-num">14</span>
-            <small>Hours</small>
-          </div>
-          <div class="countdown-sep" aria-hidden="true">:</div>
-          <div class="countdown-unit">
-            <span id="cd-mins"  class="cd-num">33</span>
-            <small>Mins</small>
-          </div>
-          <div class="countdown-sep" aria-hidden="true">:</div>
-          <div class="countdown-unit">
-            <span id="cd-secs"  class="cd-num">00</span>
-            <small>Secs</small>
-          </div>
-        </div>
-
-        <a href="contact.html" class="btn btn-primary">Notify Me</a>
+        <p>New faith-rooted designs are being prepared for the next Christos.Fashion release. Join the list for launch news and early access when the date is confirmed.</p>
+        <a href="#email-heading" class="btn btn-primary">Get Early Access</a>
       </div>
     </section>
 
@@ -603,8 +603,7 @@
             <span class="pillar-num">03</span>
             <h3>Room for Everyone</h3>
             <p>
-              XS through 5XL across the range. The Kingdom doesn't have a size limit, and
-              neither should the clothing that represents it.
+              Many tee designs are offered from XS through 5XL depending on the garment and Printify variant availability. We aim to make the range as inclusive as the available blanks allow.
             </p>
           </article>
         </div>
@@ -623,99 +622,52 @@
     </section>
 
     <!-- ============================================================
-         COMMUNITY — testimonies
+         BUILT FOR REAL LIFE — truthful use scenarios, no fabricated testimonials
          ============================================================ -->
     <section class="section section-editorial" id="community" aria-labelledby="community-heading">
       <div class="container">
         <div class="section-header reveal" style="text-align:center">
           <p class="eyebrow">Represent the Kingdom</p>
-          <h2 id="community-heading">You're Not the Only One<br><span class="title-italic">Wearing It.</span></h2>
-          <p class="section-lede">
-            Believers across the country are putting these on and finding out what happens next.
-            These are a few of the conversations that followed.
-          </p>
+          <h2 id="community-heading">Designed for the Places<br><span class="title-italic">Faith Actually Lives.</span></h2>
+          <p class="section-lede">The goal is simple: create pieces believers can wear in normal life — not only at church — so the message can travel into everyday conversations.</p>
         </div>
-
         <div class="testimony-grid stagger">
-          <figure class="testimony">
-            <span class="testimony-mark" aria-hidden="true">"</span>
-            <blockquote>
-              A woman at the gym stopped me and said her son had walked away from church.
-              We prayed right there by the treadmills. I've never had that happen over a T-shirt before.
-            </blockquote>
-            <figcaption class="testimony-author">
-              <span class="testimony-avatar" aria-hidden="true">M</span>
-              <span>
-                <cite>Marcus T.</cite>
-                <small>Wearing Faith Over Fear</small>
-              </span>
-            </figcaption>
-          </figure>
-
-          <figure class="testimony">
-            <span class="testimony-mark" aria-hidden="true">"</span>
-            <blockquote>
-              I bought <em>I Thought It Was Over</em> two weeks after losing my job. Wore it to
-              the interview I almost didn't go to. I start Monday.
-            </blockquote>
-            <figcaption class="testimony-author">
-              <span class="testimony-avatar" aria-hidden="true">D</span>
-              <span>
-                <cite>Danielle R.</cite>
-                <small>Wearing I Thought It Was Over</small>
-              </span>
-            </figcaption>
-          </figure>
-
-          <figure class="testimony">
-            <span class="testimony-mark" aria-hidden="true">"</span>
-            <blockquote>
-              My teenage son asked for the trucker hat. He wears it every single day. If two
-              words on a cap keep his faith in front of him, that's worth more than I paid.
-            </blockquote>
-            <figcaption class="testimony-author">
-              <span class="testimony-avatar" aria-hidden="true">J</span>
-              <span>
-                <cite>James O.</cite>
-                <small>Wearing Jesus Saves</small>
-              </span>
-            </figcaption>
-          </figure>
+          <article class="testimony"><span class="testimony-mark" aria-hidden="true">01</span><h3>Conversation Starter</h3><p>A clear phrase can give someone an easy opening to ask what you believe, why the words matter, or what your story has been.</p><p class="scenario-link"><a href="/products/faith-over-fear">Explore Faith Over Fear →</a></p></article>
+          <article class="testimony"><span class="testimony-mark" aria-hidden="true">02</span><h3>Daily Reminder</h3><p>Sometimes the first person who needs to read the message is the person wearing it. Faith-centered apparel can keep truth visible in ordinary routines.</p><p class="scenario-link"><a href="/collections/therapy">Explore the Therapy Collection →</a></p></article>
+          <article class="testimony"><span class="testimony-mark" aria-hidden="true">03</span><h3>Visible Faith</h3><p>At work, the gym, a coffee shop, or a weekend gathering, the design can quietly communicate what matters to you before a conversation even begins.</p><p class="scenario-link"><a href="/products/jesus-saves">Explore Jesus Saves →</a></p></article>
         </div>
       </div>
     </section>
 
     <!-- ============================================================
-         COMMUNITY — customer gallery
+         CAMPAIGN GALLERY — branded lifestyle imagery
          ============================================================ -->
     <section class="section section-editorial surface-ivory" id="gallery" aria-labelledby="gallery-heading">
       <div class="container">
         <div class="section-header reveal" style="text-align:center">
-          <p class="eyebrow">Share Your Faith</p>
-          <h2 id="gallery-heading">The Community Gallery.</h2>
+          <p class="eyebrow">Faith in Everyday Life</p>
+          <h2 id="gallery-heading">Wear It Where Life Happens.</h2>
           <p class="section-lede">
-            Tag <strong>#WearYourFaithBoldly</strong> and you might see yourself here. Real believers,
-            real days, real conversations.
+            Our campaign imagery shows the kind of everyday settings Christos.Fashion is built for — worship, friendship, family, service, and ordinary conversations. When you wear yours, tag <strong>#WearYourFaithBoldly</strong>.
           </p>
         </div>
 
-        <!-- PHOTO SLOTS — customer photos. Swap the src for approved
-             submissions; the placeholder shows until you do. -->
+        <!-- Christos.Fashion campaign lifestyle imagery. -->
         <div class="gallery-mosaic reveal">
           <figure class="photo-slot gallery-feature">
-            <img src="assets/photos/community-01.jpg" alt="A believer wearing the I Thought It Was Over, God Had Other Plans shirt at a faith gathering" width="800" height="800" loading="lazy" decoding="async" />
+            <img src="assets/photos/community-01.jpg?v=2" alt="A believer wearing the I Thought It Was Over, God Had Other Plans shirt at a faith gathering" width="800" height="800" loading="lazy" decoding="async" />
           </figure>
           <figure class="photo-slot">
-            <img src="assets/photos/community-02.jpg" alt="A believer wearing the Jesus Saves hat and Built by Faith shirt outdoors at golden hour" width="600" height="600" loading="lazy" decoding="async" />
+            <img src="assets/photos/community-02.jpg?v=2" alt="A believer wearing the Jesus Saves hat and Built by Faith shirt outdoors at golden hour" width="600" height="600" loading="lazy" decoding="async" />
           </figure>
           <figure class="photo-slot">
-            <img src="assets/photos/community-03.jpg" alt="A family wearing Built by Faith, Work Hard God First, Pray Work Repeat, and Faith Over Fear apparel" width="600" height="600" loading="lazy" decoding="async" />
+            <img src="assets/photos/community-03.jpg?v=2" alt="A family wearing Built by Faith, Work Hard God First, Pray Work Repeat, and Faith Over Fear apparel" width="600" height="600" loading="lazy" decoding="async" />
           </figure>
           <figure class="photo-slot">
-            <img src="assets/photos/community-04.jpg" alt="A volunteer wearing the God Taught Me shirt serving a neighbor in the community" width="600" height="600" loading="lazy" decoding="async" />
+            <img src="assets/photos/community-04.jpg?v=2" alt="A volunteer wearing the God Taught Me shirt serving a neighbor in the community" width="600" height="600" loading="lazy" decoding="async" />
           </figure>
           <figure class="photo-slot">
-            <img src="assets/photos/community-05.jpg" alt="Friends worshiping in Work Hard God First, Built by Faith, I Thought It Was Over, and Pray Work Repeat apparel" width="600" height="600" loading="lazy" decoding="async" />
+            <img src="assets/photos/community-05.jpg?v=2" alt="Friends worshiping in Work Hard God First, Built by Faith, I Thought It Was Over, and Pray Work Repeat apparel" width="600" height="600" loading="lazy" decoding="async" />
           </figure>
         </div>
 
@@ -802,8 +754,8 @@
           You're Not Buying a Shirt.<br><em>You're Joining a Movement.</em>
         </h2>
         <p class="reveal" style="--reveal-delay:.16s">
-          Thousands of believers have decided their faith isn't a private matter. Pick the message
-          you're ready to carry, and wear it into the rooms only you can walk into.
+          Faith does not have to stay hidden. Pick the message you're ready to carry, and wear it into
+          the rooms, conversations, and everyday moments only you can walk into.
         </p>
         <div class="movement-cta-actions reveal" style="--reveal-delay:.24s">
           <a href="shop.html" class="btn btn-primary">Shop the Collection <span class="btn-arrow" aria-hidden="true">→</span></a>
@@ -920,8 +872,8 @@
             <li><a href="about.html">About Us</a></li>
             <li><a href="faq.html">FAQ</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="faq.html#shipping">Shipping</a></li>
-            <li><a href="faq.html#returns">Returns</a></li>
+            <li><a href="shipping.html">Shipping</a></li>
+            <li><a href="returns.html">Returns</a></li>
           </ul>
         </div>
 
@@ -952,7 +904,7 @@
         <div class="footer-bottom-links">
           <a href="privacy.html">Privacy Policy</a>
           <a href="terms.html">Terms of Service</a>
-          <a href="faq.html#shipping">Shipping Policy</a>
+          <a href="shipping.html">Shipping Policy</a>
         </div>
       </div>
     </div>

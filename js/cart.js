@@ -36,15 +36,17 @@ export const Cart = {
       items.push({ ...item, quantity: item.quantity ?? 1 });
     }
     saveCart(items);
+    window.cfTrack?.('add_to_cart', { currency:'USD', value:(item.price * (item.quantity ?? 1))/100, items:[{ item_id:item.productId, item_name:item.title, item_variant:item.variantTitle, price:item.price/100, quantity:item.quantity ?? 1 }] });
     CartUI.sync();
     CartUI.open();
   },
 
   remove(productId, variantId) {
-    const items = loadCart().filter(
-      i => !(i.productId === productId && i.variantId === variantId)
-    );
+    const before = loadCart();
+    const removed = before.find(i => i.productId === productId && i.variantId === variantId);
+    const items = before.filter(i => !(i.productId === productId && i.variantId === variantId));
     saveCart(items);
+    if (removed) window.cfTrack?.('remove_from_cart', { currency:'USD', value:(removed.price * removed.quantity)/100, items:[{ item_id:removed.productId, item_name:removed.title, item_variant:removed.variantTitle, price:removed.price/100, quantity:removed.quantity }] });
     CartUI.sync();
   },
 
@@ -91,7 +93,7 @@ export const CartUI = {
             <span>Subtotal</span>
             <strong id="cart-subtotal-amount"></strong>
           </div>
-          <p class="cart-shipping-note">Shipping calculated at checkout. Free on orders $50+.</p>
+          <p class="cart-shipping-note">US shipping is $5.99 under $50 and free on orders $50+.</p>
           <a href="checkout.html" class="btn btn-primary cart-checkout-btn">Proceed to Checkout</a>
         </div>
       </aside>
@@ -99,6 +101,7 @@ export const CartUI = {
 
     document.getElementById('cart-close').addEventListener('click', () => CartUI.close());
     document.getElementById('cart-overlay').addEventListener('click', () => CartUI.close());
+    document.querySelector('.cart-checkout-btn')?.addEventListener('click', () => { const items=Cart.items(); window.cfTrack?.('begin_checkout', {currency:'USD', value:Cart.subtotalCents()/100, items:items.map(i=>({item_id:i.productId,item_name:i.title,item_variant:i.variantTitle,price:i.price/100,quantity:i.quantity}))}); });
 
     // Wire up the nav cart button (if present)
     document.querySelectorAll('[data-cart-toggle]').forEach(btn => {
@@ -109,6 +112,8 @@ export const CartUI = {
   },
 
   open() {
+    const items = Cart.items();
+    if (items.length) window.cfTrack?.('view_cart', { currency:'USD', value:Cart.subtotalCents()/100, items:items.map(i=>({item_id:i.productId,item_name:i.title,item_variant:i.variantTitle,price:i.price/100,quantity:i.quantity})) });
     document.getElementById('cart-drawer')?.classList.add('open');
     document.getElementById('cart-overlay')?.classList.add('open');
     document.body.style.overflow = 'hidden';

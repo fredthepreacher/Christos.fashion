@@ -45,6 +45,7 @@
       margin-top: 16px;
     }
   </style>
+  <script src="/js/analytics.js" defer></script>
 </head>
 <body>
   <header class="nav" id="nav" role="banner">
@@ -82,10 +83,24 @@
   <script>
     const params  = new URLSearchParams(window.location.search);
     const orderId = params.get('order');
+    const value = Number(params.get('value') || 0);
+    const currency = params.get('currency') || 'USD';
     if (orderId) {
       const el = document.getElementById('order-id-display');
       el.textContent = 'Order ID: ' + orderId;
     }
+    function trackPurchaseOnce() {
+      if (!orderId || !window.cfTrack) return;
+      const key = 'cf_purchase_tracked_' + orderId;
+      if (localStorage.getItem(key)) return;
+      let items = [];
+      try { items = JSON.parse(sessionStorage.getItem('cf_last_purchase_items') || '[]'); } catch {}
+      window.cfTrack('purchase', { transaction_id:orderId, value:value, currency:currency, items:items });
+      localStorage.setItem(key, '1');
+      sessionStorage.removeItem('cf_last_purchase_items');
+    }
+    window.addEventListener('cf-analytics-ready', trackPurchaseOnce, { once:true });
+    setTimeout(trackPurchaseOnce, 1200);
   </script>
   <script src="script.js"></script>
 </body>

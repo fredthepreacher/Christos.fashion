@@ -23,6 +23,10 @@ exports.handler = async (event) => {
 
   const sig = event.headers['stripe-signature'];
   const { STRIPE_WEBHOOK_SECRET, PRINTIFY_API_KEY, PRINTIFY_SHOP_ID } = process.env;
+  if (!STRIPE_WEBHOOK_SECRET || !PRINTIFY_API_KEY || !PRINTIFY_SHOP_ID || !process.env.STRIPE_SECRET_KEY) {
+    console.error('stripe-webhook missing required environment variables');
+    return { statusCode: 500, body: 'Server misconfiguration' };
+  }
 
   let stripeEvent;
   try {
@@ -47,7 +51,7 @@ exports.handler = async (event) => {
 
   if (!lineItemsJSON || !shippingJSON) {
     console.error('Missing metadata on PaymentIntent', intent.id);
-    return { statusCode: 200, body: 'Missing metadata — order not created' };
+    return { statusCode: 500, body: 'Missing fulfillment metadata; retry requested' };
   }
 
   let lineItems, shipping;
@@ -55,7 +59,7 @@ exports.handler = async (event) => {
     lineItems = JSON.parse(lineItemsJSON);
     shipping  = JSON.parse(shippingJSON);
   } catch {
-    return { statusCode: 200, body: 'Invalid metadata JSON' };
+    return { statusCode: 500, body: 'Invalid fulfillment metadata; retry requested' };
   }
 
   try {
@@ -64,10 +68,11 @@ exports.handler = async (event) => {
     const printifyOrder = {
       external_id: intent.id,          // links Stripe payment to Printify order
       label:       `CF-${intent.id.slice(-8).toUpperCase()}`,
-      line_items:  lineItems.map(item => ({
+      line_items:  lineItems.map((item, index) => ({
         product_id: item.product_id,
         variant_id: item.variant_id,
         quantity:   item.quantity,
+        external_id: `${intent.id}-${index + 1}`,
       })),
       shipping_method: 1,              // standard shipping; see Printify docs for options
       send_shipping_notification: true,
@@ -100,8 +105,13 @@ exports.handler = async (event) => {
     if (!res.ok) {
       const text = await res.text();
       console.error('Printify order creation failed:', res.status, text);
-      // Return 200 to Stripe so it doesn't retry — log and investigate manually
-      return { statusCode: 200, body: 'Printify order failed — logged' };
+      // A duplicate external_id can occur if Stripe retries after Printify accepted
+      // the order but the previous function response was interrupted. Treat that
+      // as fulfilled/idempotent; otherwise return non-2xx so Stripe retries.
+      if ((res.status === 409 || res.status === 422) && /external|duplicate|already/i.test(text)) {
+        return { statusCode: 200, body: 'Order already exists in Printify' };
+      }
+      return { statusCode: 500, body: 'Printify order creation failed; retry requested' };
     }
 
     const order = await res.json();
@@ -110,6 +120,6 @@ exports.handler = async (event) => {
     return { statusCode: 200, body: JSON.stringify({ printifyOrderId: order.id }) };
   } catch (err) {
     console.error('stripe-webhook order creation error:', err);
-    return { statusCode: 200, body: 'Error creating order — logged' };
+    return { statusCode: 500, body: 'Temporary order creation error; retry requested' };
   }
 };

@@ -42,6 +42,16 @@ exports.handler = async (event) => {
   if (!Array.isArray(items) || items.length === 0) {
     return cors(400, JSON.stringify({ error: 'Cart is empty' }));
   }
+  if (items.length > 10) {
+    return cors(400, JSON.stringify({ error: 'Too many distinct items in one order' }));
+  }
+
+  // Validate shipping server-side before accepting payment. Client-side validation
+  // improves UX, but it cannot be trusted for fulfillment-critical data.
+  const shippingError = validateUSShipping(shipping);
+  if (shippingError) {
+    return cors(400, JSON.stringify({ error: shippingError }));
+  }
 
   const { PRINTIFY_API_KEY, PRINTIFY_SHOP_ID, STRIPE_SECRET_KEY } = process.env;
   if (!PRINTIFY_API_KEY || !PRINTIFY_SHOP_ID || !STRIPE_SECRET_KEY) {
@@ -64,21 +74,21 @@ exports.handler = async (event) => {
       }
 
       const product = await res.json();
-      const variant = product.variants.find(v => v.id === item.variantId && v.is_enabled);
+      const variant = product.variants.find(v => v.id === item.variantId && v.is_enabled && v.is_available !== false);
 
       if (!variant) {
         return cors(400, JSON.stringify({ error: `Variant ${item.variantId} unavailable` }));
       }
 
-      const qty = Math.max(1, Math.floor(item.quantity ?? 1));
+      const qty = Math.min(10, Math.max(1, Math.floor(Number(item.quantity) || 1)));
       subtotalCents += variant.price * qty;
 
+      // Keep metadata intentionally compact; the webhook only needs these
+      // fulfillment identifiers. Pricing is already locked into the PI amount.
       lineItems.push({
-        product_id:      product.id,
-        variant_id:      variant.id,
-        quantity:        qty,
-        price_cents:     variant.price,
-        title:           `${product.title} — ${variant.title}`,
+        product_id: product.id,
+        variant_id: variant.id,
+        quantity: qty,
       });
     }
 
@@ -97,6 +107,19 @@ exports.handler = async (event) => {
         subtotal:   subtotalCents,
         shipping_cost: shippingCents,
       },
+      receipt_email: shipping.email,
+      shipping: {
+        name: shipping.name,
+        phone: shipping.phone || undefined,
+        address: {
+          line1: shipping.address1,
+          line2: shipping.address2 || undefined,
+          city: shipping.city,
+          state: shipping.state,
+          postal_code: shipping.zip,
+          country: 'US',
+        },
+      },
       automatic_payment_methods: { enabled: true },
     });
 
@@ -111,6 +134,19 @@ exports.handler = async (event) => {
     return cors(500, JSON.stringify({ error: err.message }));
   }
 };
+
+function validateUSShipping(shipping) {
+  if (!shipping || typeof shipping !== 'object') return 'Shipping address is required';
+  const required = ['name', 'email', 'address1', 'city', 'state', 'zip'];
+  for (const key of required) {
+    if (!String(shipping[key] || '').trim()) return `Missing shipping field: ${key}`;
+  }
+  if (String(shipping.country || 'US').toUpperCase() !== 'US') return 'Checkout is currently available for U.S. delivery only';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(shipping.email).trim())) return 'Enter a valid email address';
+  if (!/^[A-Za-z]{2}$/.test(String(shipping.state).trim())) return 'Enter a valid two-letter U.S. state code';
+  if (!/^\d{5}(-\d{4})?$/.test(String(shipping.zip).trim())) return 'Enter a valid U.S. ZIP code';
+  return '';
+}
 
 function cors(status, body) {
   return {
