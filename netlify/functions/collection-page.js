@@ -54,7 +54,15 @@ const COLLECTIONS = {
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'GET' && event.httpMethod !== 'HEAD') return { statusCode:405, body:'Method not allowed' };
-  const slug = decodeURIComponent((event.queryStringParameters && event.queryStringParameters.slug) || '').replace(/^\/+|\/+$/g,'') || 'all';
+  // Same fix as product-page.js: the /collections/* rewrite does not reliably
+  // populate queryStringParameters.slug, so every collection silently fell back
+  // to 'all' and rendered the identical generic page at five different URLs —
+  // duplicate content that Google would have penalised. Fall back to the path.
+  const qSlug = (event.queryStringParameters && event.queryStringParameters.slug) || '';
+  const path  = event.path || (event.rawUrl ? new URL(event.rawUrl).pathname : '');
+  const pMatch = path.match(/\/collections\/([^?]+?)\/?$/);
+  const slug = decodeURIComponent(qSlug || (pMatch ? pMatch[1] : ''))
+    .replace(/^\/+|\/+$/g, '') || 'all';
   const cfg = COLLECTIONS[slug];
   if (!cfg) return response(404, notFound(), 'noindex, nofollow');
   try {

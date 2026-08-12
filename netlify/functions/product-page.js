@@ -1,11 +1,27 @@
 const { fetchCatalog, findProduct, stripHtml } = require('../lib/catalog');
 
+// Resolve the slug from the query string OR the request path.
+//
+// The netlify.toml rewrite (/products/* -> product-page?slug=:splat) does not
+// reliably populate queryStringParameters.slug in production — verified live:
+// /.netlify/functions/product-page?slug=X returned 200 while /products/X
+// returned 404, which meant every product URL in the sitemap and the Merchant
+// Center feed was dead. Reading the path as a fallback makes the function
+// correct regardless of how the rewrite behaves.
+function resolveSlug(event, prefix) {
+  const q = event.queryStringParameters && event.queryStringParameters.slug;
+  if (q) return decodeURIComponent(q);
+  const path = event.path || (event.rawUrl ? new URL(event.rawUrl).pathname : '');
+  const m = path.match(new RegExp('/' + prefix + '/([^?]+?)/?$'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'GET' && event.httpMethod !== 'HEAD') {
     return { statusCode: 405, headers: { Allow: 'GET, HEAD' }, body: 'Method not allowed' };
   }
 
-  const slug = (event.queryStringParameters && event.queryStringParameters.slug) || '';
+  const slug = resolveSlug(event, 'products');
   try {
     const products = await fetchCatalog(process.env);
     const product = findProduct(products, slug);
