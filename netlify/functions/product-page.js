@@ -80,12 +80,21 @@ function buildProductFaq(p, { colors, sizes, lo, hi }) {
     : (arr[0] || '');
   const pairs = [];
 
-  if (sizes.length) {
+  // Printify reports one-size items as a single size value literally named
+  // "One size", which made the generic branch read "available in One size".
+  // Detect that case and use natural phrasing instead.
+  // Only claim one-size when the catalog actually says so, or when it's a hat
+  // with no size options at all. A shirt with missing size data gets no size
+  // question rather than a confident wrong answer.
+  const oneSize = (sizes.length === 1 && /^one[\s-]?size$/i.test(sizes[0]))
+               || (sizes.length === 0 && isHat);
+
+  if (oneSize) {
+    pairs.push([`What size is the ${t}?`,
+      `The ${t} is one size, designed to fit most adults.${isHat ? ' Caps of this style use an adjustable closure at the back.' : ''}`]);
+  } else if (sizes.length) {
     pairs.push([`What sizes does the ${t} come in?`,
       `The ${t} is available in ${list(sizes)}. Sizes are listed as shown by the manufacturer, so check the size guidance before ordering — because each item is made to order, sizing is the customer's responsibility.`]);
-  } else if (isHat) {
-    pairs.push([`What size is the ${t}?`,
-      `The ${t} is one size, designed to fit most adults. Structured caps of this style use an adjustable closure at the back.`]);
   }
 
   if (colors.length) {

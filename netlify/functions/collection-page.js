@@ -67,7 +67,14 @@ exports.handler = async (event) => {
   if (!cfg) return response(404, notFound(), 'noindex, nofollow');
   try {
     const products = (await fetchCatalog(process.env)).filter(cfg.match);
-    return response(200, render(cfg, slug, products), 'index, follow, max-image-preview:large');
+    // An empty collection is still served so any existing link keeps working,
+    // but it must not be indexed: a page promising apparel with nothing to buy
+    // is thin content, and Google penalises it. The moment a product is tagged
+    // into the collection in Printify, this flips back to indexable on its own.
+    const robots = products.length
+      ? 'index, follow, max-image-preview:large'
+      : 'noindex, follow';
+    return response(200, render(cfg, slug, products), robots);
   } catch (err) {
     console.error('collection-page error:', err.message);
     return response(503, errorPage(), 'noindex, nofollow');

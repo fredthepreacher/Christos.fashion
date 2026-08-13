@@ -9,17 +9,32 @@ const STATIC_URLS = [
   ['https://christos.fashion/returns.html','0.5'],
   ['https://christos.fashion/privacy.html','0.3'],
   ['https://christos.fashion/terms.html','0.3'],
-  ['https://christos.fashion/collections/all','0.9'],
-  ['https://christos.fashion/collections/christian-shirts','0.9'],
-  ['https://christos.fashion/collections/christian-hats','0.9'],
-  ['https://christos.fashion/collections/therapy','0.9'],
-  ['https://christos.fashion/collections/faith-over-fear','0.9'],
-  ['https://christos.fashion/collections/jesus-saves','0.9'],
 ];
+
+// Collections are only advertised to search engines when they actually
+// contain products. /collections/faith-over-fear was being listed here and
+// crawled while the catalog had nothing tagged faith-over-fear, so Google
+// was pointed at an empty page — thin content, and a promise of apparel
+// that cannot be bought. This makes the sitemap self-healing: tag a product
+// in Printify and its collection reappears on the next cache cycle.
+const COLLECTION_MATCHERS = [
+  ['all',              () => true],
+  ['christian-shirts', p => p.category === 'shirts'],
+  ['christian-hats',   p => p.category === 'hats'],
+  ['therapy',          p => p.collections.includes('therapy')],
+  ['faith-over-fear',  p => p.collections.includes('faith-over-fear')],
+  ['jesus-saves',      p => p.collections.includes('jesus-saves')],
+];
+
 exports.handler = async () => {
   try {
     const products=await fetchCatalog(process.env);
-    const urls=STATIC_URLS.concat(products.map(p=>[`https://christos.fashion${p.productUrl}`,'0.8']));
+    const liveCollections = COLLECTION_MATCHERS
+      .filter(([, match]) => products.some(match))
+      .map(([slug]) => [`https://christos.fashion/collections/${slug}`,'0.9']);
+    const urls=STATIC_URLS
+      .concat(liveCollections)
+      .concat(products.map(p=>[`https://christos.fashion${p.productUrl}`,'0.8']));
     const now=new Date().toISOString().slice(0,10);
     const body=`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(([loc,priority])=>`  <url><loc>${xml(loc)}</loc><lastmod>${now}</lastmod><changefreq>${priority==='1.0'?'weekly':'monthly'}</changefreq><priority>${priority}</priority></url>`).join('\n')}\n</urlset>`;
     return {statusCode:200,headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public, max-age=3600, s-maxage=21600'},body};
