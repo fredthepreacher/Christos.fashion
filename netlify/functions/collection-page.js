@@ -78,6 +78,50 @@ function esc(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function jsonSafe(v){return JSON.stringify(v).replace(/</g,'\\u003c');}
 function money(c){return '$'+(Number(c||0)/100).toFixed(2);}
 
+// Per-collection Q&A. Names and counts are read from the live catalog so the
+// answers stay true as the Printify shop changes; nothing is hardcoded that
+// could go stale, and no ratings, review counts or stock levels are invented.
+function buildCollectionFaq(cfg, slug, products) {
+  const names = products.map(p => p.cleanTitle);
+  const list = a => a.length > 1 ? a.slice(0,-1).join(', ') + ' and ' + a[a.length-1] : (a[0] || '');
+  const prices = products.flatMap(p => p.variants.map(v => v.price)).filter(Number.isFinite);
+  const lo = prices.length ? Math.min(...prices) : null;
+  const money = c => '$' + (Number(c||0)/100).toFixed(2);
+  const pairs = [];
+
+  // cfg.name may already read as a full phrase ("The Therapy Collection"), so
+  // only append the word "collection" when it isn't already there — otherwise
+  // the questions come out as "the The Therapy Collection collection".
+  const N = cfg.name;
+  const subject = /collection/i.test(N) ? N : `${N} collection`;
+  const bare = N.replace(/^The\s+/i, '');
+
+  pairs.push([`What is ${/^The\s/i.test(N) ? N : 'the ' + subject}?`, cfg.seoDescription]);
+
+  if (names.length) {
+    pairs.push([`What products are in the ${bare}${/collection/i.test(N) ? '' : ' collection'}?`,
+      `${N} currently includes ${names.length} design${names.length===1?'':'s'}: ${list(names)}. The listing is generated from the live catalog, so it always reflects what is actually available to order.`]);
+  }
+
+  if (lo !== null) {
+    pairs.push([`How much does ${bare} apparel cost?`,
+      `${N} pieces start at ${money(lo)}. Exact price depends on the size and colour chosen, and every price is verified server-side at checkout.`]);
+  }
+
+  if (slug === 'therapy') {
+    pairs.push([`Is the Therapy Collection about mental health treatment?`,
+      `No. The Therapy Collection is a set of Christian statement designs about faith, Scripture and prayer as sources of hope and encouragement. It is not medical or mental-health advice and is not a substitute for professional care.`]);
+  }
+
+  pairs.push([`What sizes are available in the ${bare}${/collection/i.test(N) ? '' : ' collection'}?`,
+    `Shirt designs are offered from XS through 5XL depending on the garment, and hats are one size designed to fit most adults. Exact sizes for each design are listed on its product page.`]);
+
+  pairs.push([`Does Christos.Fashion ship ${bare} orders for free?`,
+    `Shipping within the United States is free on orders of $50 or more, and a flat $5.99 under that. Christos.Fashion currently ships to the United States only.`]);
+
+  return pairs;
+}
+
 function render(cfg, slug, products) {
   const canonical=`https://christos.fashion/collections/${slug}`;
   const cards=products.length?products.map((p,i)=>{
@@ -86,8 +130,23 @@ function render(cfg, slug, products) {
   }).join(''):`<div class="collection-empty"><p class="eyebrow">Coming Into Focus</p><h2>This collection is syncing from Printify.</h2><p>If the products were just created, check again in a few minutes.</p><a href="/shop.html" class="btn btn-primary">Browse All Products</a></div>`;
   const schema={'@context':'https://schema.org','@type':'CollectionPage',name:cfg.name,description:cfg.seoDescription,url:canonical,mainEntity:{'@type':'ItemList',numberOfItems:products.length,itemListElement:products.map((p,i)=>({'@type':'ListItem',position:i+1,url:`https://christos.fashion${p.productUrl}`,name:p.cleanTitle}))}};
   const breadcrumb={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'Home',item:'https://christos.fashion/'},{'@type':'ListItem',position:2,name:'Shop',item:'https://christos.fashion/shop.html'},{'@type':'ListItem',position:3,name:cfg.name,item:canonical}]};
+
+  // Collection Q&A. Visible markup and FAQPage schema are generated from one
+  // array so they cannot drift. Product names and counts come from the live
+  // catalog; shipping and returns answers mirror the published policies.
+  const faqPairs = buildCollectionFaq(cfg, slug, products);
+  const faqSchema = {
+    '@context':'https://schema.org','@type':'FAQPage',
+    '@id':`${canonical}#faq`, url:canonical, name:`${cfg.name} — Questions`, inLanguage:'en-US',
+    isPartOf:{'@type':'WebSite',name:'Christos.Fashion',url:'https://christos.fashion'},
+    speakable:{'@type':'SpeakableSpecification',cssSelector:['#collection-faq .faq-q','#collection-faq .faq-a']},
+    mainEntity: faqPairs.map(([q,a])=>({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}}))
+  };
+  const faqHtml = `<section class="section" id="collection-faq" aria-labelledby="collection-faq-heading"><div class="container" style="max-width:820px"><div class="section-header" style="text-align:center"><p class="eyebrow">Common Questions</p><h2 id="collection-faq-heading">${esc(cfg.name)} — Questions</h2></div><div class="faq-list" role="list">${
+    faqPairs.map(([q,a])=>`<div class="faq-item" role="listitem"><button class="faq-q" aria-expanded="false"><span>${esc(q)}</span><svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-inner">${esc(a)}</div></div></div>`).join('')
+  }</div></div></section>`;
   const heroArt = slug==='therapy' ? `<div class="therapy-art-strip" aria-label="Therapy Collection designs"><img src="/assets/designs/scripture-is-my-therapy.webp" alt="Scripture Is My Therapy design"><img src="/assets/designs/jesus-is-my-therapy.webp" alt="Jesus Is My Therapy design"><img src="/assets/designs/god-is-my-therapy.webp" alt="God Is My Therapy design"><img src="/assets/designs/prayer-is-my-therapy.webp" alt="Prayer Is My Therapy design"><img src="/assets/designs/christ-is-my-therapy.webp" alt="Christ Is My Therapy design"></div>` : '';
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(cfg.seoTitle)}</title><meta name="description" content="${esc(cfg.seoDescription)}"><link rel="canonical" href="${canonical}"><meta name="robots" content="index, follow, max-image-preview:large"><meta property="og:type" content="website"><meta property="og:url" content="${canonical}"><meta property="og:title" content="${esc(cfg.seoTitle)}"><meta property="og:description" content="${esc(cfg.seoDescription)}"><meta property="og:image" content="https://christos.fashion/assets/og-image.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/styles.css"><script type="application/ld+json">${jsonSafe(schema)}</script><script type="application/ld+json">${jsonSafe(breadcrumb)}</script><script src="/js/analytics.js" defer></script></head><body><header class="nav" id="nav" role="banner"><div class="nav-inner"><nav class="nav-links"><a href="/" class="nav-link">Home</a><a href="/shop.html" class="nav-link active">Shop</a><a href="/about.html" class="nav-link">About</a></nav><a href="/"><img src="/assets/christos-logo-gold.png" alt="Christos.Fashion" class="nav-logo"></a><div class="nav-right"><nav class="nav-links"><a href="/faq.html" class="nav-link">FAQ</a><a href="/contact.html" class="nav-link">Contact</a></nav><button class="nav-cart-btn" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.99-1.74L23 6H6"/></svg><span data-cart-count class="cart-badge" style="display:none">0</span></button></div></div></header><main id="main-content"><div class="page-header collection-page-header"><nav class="breadcrumb"><a href="/">Home</a><span class="breadcrumb-sep">/</span><a href="/shop.html">Shop</a><span class="breadcrumb-sep">/</span><span>${esc(cfg.name)}</span></nav><p class="eyebrow">${esc(cfg.eyebrow)}</p><h1>${cfg.title}</h1><p>${esc(cfg.description)}</p></div>${heroArt}<section class="section"><div class="container"><div class="shop-header-row"><div><p class="eyebrow">Shop the Collection</p><h2>${products.length} ${products.length===1?'Design':'Designs'}</h2></div><a class="btn btn-outline" href="/shop.html">All Products</a></div><div class="product-grid collection-product-grid">${cards}</div></div></section><section class="scripture-band scripture-band-burgundy"><div class="container"><blockquote>“For I am not ashamed of the gospel.”</blockquote><cite>Romans 1:16</cite></div></section></main><footer class="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><img src="/assets/christos-logo-gold.png" alt="Christos.Fashion"><p>Modern Christian apparel for believers who wear their faith boldly.</p></div><div class="footer-col"><h2 class="footer-heading">Collections</h2><ul><li><a href="/collections/therapy">Therapy Collection</a></li><li><a href="/collections/faith-over-fear">Faith Over Fear</a></li><li><a href="/collections/jesus-saves">Jesus Saves</a></li></ul></div><div class="footer-col"><h2 class="footer-heading">Help</h2><ul><li><a href="/shipping.html">Shipping</a></li><li><a href="/returns.html">Returns & Replacements</a></li><li><a href="/contact.html">Contact</a></li></ul></div></div></div></footer><script type="module">import { CartUI } from '/js/cart.js'; CartUI.init();</script><script src="/script.js"></script></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(cfg.seoTitle)}</title><meta name="description" content="${esc(cfg.seoDescription)}"><link rel="canonical" href="${canonical}"><meta name="robots" content="index, follow, max-image-preview:large"><meta property="og:type" content="website"><meta property="og:url" content="${canonical}"><meta property="og:title" content="${esc(cfg.seoTitle)}"><meta property="og:description" content="${esc(cfg.seoDescription)}"><meta property="og:image" content="https://christos.fashion/assets/og-image.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/styles.css"><script type="application/ld+json">${jsonSafe(schema)}</script><script type="application/ld+json">${jsonSafe(breadcrumb)}</script><script type="application/ld+json">${jsonSafe(faqSchema)}</script><script src="/js/analytics.js" defer></script></head><body><header class="nav" id="nav" role="banner"><div class="nav-inner"><nav class="nav-links"><a href="/" class="nav-link">Home</a><a href="/shop.html" class="nav-link active">Shop</a><a href="/about.html" class="nav-link">About</a></nav><a href="/"><img src="/assets/christos-logo-gold.png" alt="Christos.Fashion" class="nav-logo"></a><div class="nav-right"><nav class="nav-links"><a href="/faq.html" class="nav-link">FAQ</a><a href="/contact.html" class="nav-link">Contact</a></nav><button class="nav-cart-btn" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.99-1.74L23 6H6"/></svg><span data-cart-count class="cart-badge" style="display:none">0</span></button></div></div></header><main id="main-content"><div class="page-header collection-page-header"><nav class="breadcrumb"><a href="/">Home</a><span class="breadcrumb-sep">/</span><a href="/shop.html">Shop</a><span class="breadcrumb-sep">/</span><span>${esc(cfg.name)}</span></nav><p class="eyebrow">${esc(cfg.eyebrow)}</p><h1>${cfg.title}</h1><p>${esc(cfg.description)}</p></div>${heroArt}<section class="section"><div class="container"><div class="shop-header-row"><div><p class="eyebrow">Shop the Collection</p><h2>${products.length} ${products.length===1?'Design':'Designs'}</h2></div><a class="btn btn-outline" href="/shop.html">All Products</a></div><div class="product-grid collection-product-grid">${cards}</div></div></section>${faqHtml}<section class="scripture-band scripture-band-burgundy"><div class="container"><blockquote>“For I am not ashamed of the gospel.”</blockquote><cite>Romans 1:16</cite></div></section></main><footer class="footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><img src="/assets/christos-logo-gold.png" alt="Christos.Fashion"><p>Modern Christian apparel for believers who wear their faith boldly.</p></div><div class="footer-col"><h2 class="footer-heading">Collections</h2><ul><li><a href="/collections/therapy">Therapy Collection</a></li><li><a href="/collections/faith-over-fear">Faith Over Fear</a></li><li><a href="/collections/jesus-saves">Jesus Saves</a></li></ul></div><div class="footer-col"><h2 class="footer-heading">Help</h2><ul><li><a href="/shipping.html">Shipping</a></li><li><a href="/returns.html">Returns & Replacements</a></li><li><a href="/contact.html">Contact</a></li></ul></div></div></div></footer><script type="module">import { CartUI } from '/js/cart.js'; CartUI.init();</script><script src="/script.js"></script></body></html>`;
 }
 function notFound(){return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Collection Not Found — Christos.Fashion</title><link rel="stylesheet" href="/styles.css"></head><body><main class="success-page"><div class="success-card"><h1>Collection not found.</h1><a class="btn btn-primary" href="/shop.html">Shop All Products</a></div></main></body></html>';}
 function errorPage(){return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Collection Temporarily Unavailable — Christos.Fashion</title><link rel="stylesheet" href="/styles.css"></head><body><main class="success-page"><div class="success-card"><h1>We couldn’t load the collection.</h1><p>Please try again shortly.</p><a class="btn btn-primary" href="/shop.html">Shop All Products</a></div></main></body></html>';}

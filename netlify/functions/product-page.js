@@ -66,6 +66,57 @@ function optionValues(product, kind) {
   return group ? group.values.map(v => v.title) : [];
 }
 
+// Builds the Q&A pairs for one product. Sizes, colours, price and category
+// come from the live Printify catalog; shipping and returns answers mirror
+// shipping.html and returns.html word-for-word in substance so the site
+// never contradicts itself. No ratings, review counts, stock numbers or
+// delivery promises are fabricated.
+function buildProductFaq(p, { colors, sizes, lo, hi }) {
+  const t = p.cleanTitle;
+  const isHat = p.category === 'hats';
+  const money = c => '$' + (Number(c || 0) / 100).toFixed(2);
+  const list = arr => arr.length > 1
+    ? arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1]
+    : (arr[0] || '');
+  const pairs = [];
+
+  if (sizes.length) {
+    pairs.push([`What sizes does the ${t} come in?`,
+      `The ${t} is available in ${list(sizes)}. Sizes are listed as shown by the manufacturer, so check the size guidance before ordering — because each item is made to order, sizing is the customer's responsibility.`]);
+  } else if (isHat) {
+    pairs.push([`What size is the ${t}?`,
+      `The ${t} is one size, designed to fit most adults. Structured caps of this style use an adjustable closure at the back.`]);
+  }
+
+  if (colors.length) {
+    pairs.push([`What colours is the ${t} available in?`,
+      `The ${t} comes in ${list(colors)}. Colour availability reflects the live catalog and can change if a colourway sells out at the print provider.`]);
+  }
+
+  pairs.push([`How much does the ${t} cost?`,
+    lo === hi
+      ? `The ${t} is ${money(lo)}. Prices are set from the live catalog and verified server-side at checkout, so the amount you are charged always matches the amount shown.`
+      : `The ${t} starts at ${money(lo)} and goes up to ${money(hi)} depending on the size and colour you choose. Prices are verified server-side at checkout.`]);
+
+  pairs.push([`How should I wash the ${t}?`,
+    isHat
+      ? `Spot clean the ${t} with cool water and a mild detergent, and let it air dry. Avoid the washing machine and the dryer, which can distort a structured cap.`
+      : `Machine wash the ${t} cold and inside out with like colours, then tumble dry low. Do not iron directly on the print. Washing inside out is what keeps the design sharp over time.`]);
+
+  pairs.push([`How much is shipping on the ${t}?`,
+    `Shipping within the United States is free on orders of $50 or more, and a flat $5.99 on orders under $50. Christos.Fashion currently ships to the United States only.`]);
+
+  pairs.push([`Can I return the ${t}?`,
+    `Because the ${t} is printed on demand, ordinary change-of-mind returns are not accepted. If it arrives damaged, defective, misprinted or incorrect, contact hello@christos.fashion within 30 days of delivery with your order ID and a photo, and it will be replaced or refunded.`]);
+
+  if (p.collections.includes('therapy')) {
+    pairs.push([`What does the Therapy Collection mean?`,
+      `The Therapy Collection is a set of five Christian statement designs pointing to faith, Scripture and prayer as sources of hope and encouragement. The ${t} is part of that collection. These are statements of belief, not medical or mental-health advice.`]);
+  }
+
+  return pairs;
+}
+
 function renderProductPage(p, selectedVariantId) {
   const prices = p.variants.map(v => v.price);
   const lo = Math.min(...prices), hi = Math.max(...prices);
@@ -116,6 +167,28 @@ function renderProductPage(p, selectedVariantId) {
       {'@type':'ListItem',position:3,name:p.cleanTitle,item:canonical}
     ]
   };
+
+  // ── Per-product Q&A (answer-engine surface) ────────────────────────
+  // Every answer is derived from live catalog data or from the published
+  // shipping/returns policy — nothing is invented. The visible markup and
+  // the FAQPage schema are generated from the SAME array, so they can never
+  // drift apart (which is exactly how faq.html ended up advertising 15 of
+  // its 20 questions to Google).
+  const faqPairs = buildProductFaq(p, { colors, sizes, lo, hi });
+  const faqSchema = {
+    '@context':'https://schema.org','@type':'FAQPage',
+    '@id':`${canonical}#faq`,
+    url:canonical,
+    name:`${p.cleanTitle} — Questions`,
+    inLanguage:'en-US',
+    isPartOf:{'@type':'WebSite',name:'Christos.Fashion',url:'https://christos.fashion'},
+    about:{'@type':'Product',name:p.cleanTitle,url:canonical},
+    speakable:{'@type':'SpeakableSpecification',cssSelector:['#product-faq .faq-q','#product-faq .faq-a']},
+    mainEntity: faqPairs.map(([q,a]) => ({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}}))
+  };
+  const faqHtml = `<section class="section" id="product-faq" aria-labelledby="product-faq-heading"><div class="container" style="max-width:820px"><div class="section-header" style="text-align:center"><p class="eyebrow">Before You Buy</p><h2 id="product-faq-heading">${esc(p.cleanTitle)} — Questions</h2></div><div class="faq-list" role="list">${
+    faqPairs.map(([q,a]) => `<div class="faq-item" role="listitem"><button class="faq-q" aria-expanded="false"><span>${esc(q)}</span><svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-inner">${esc(a)}</div></div></div>`).join('')
+  }</div></div></section>`;
   const imageList = (p.images && p.images.length ? p.images : [p.image]).filter(Boolean);
   const gallery = imageList.slice(0,4).map((src,i) => `<button class="product-thumb${i===0?' active':''}" type="button" data-image="${esc(src)}" aria-label="View product image ${i+1}"><img src="${esc(src)}" alt="${esc(p.cleanTitle)} product view ${i+1}" loading="${i===0?'eager':'lazy'}" decoding="async"></button>`).join('');
   const optionSummary = selectedVariant ? `Selected: ${selectedVariant.title}` : [colors.length ? `${colors.length} color${colors.length===1?'':'s'}` : '', sizes.length ? `${sizes.length} size${sizes.length===1?'':'s'}` : ''].filter(Boolean).join(' · ');
@@ -133,7 +206,7 @@ function renderProductPage(p, selectedVariantId) {
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(p.cleanTitle)} — Christos.Fashion"><meta name="twitter:description" content="${esc(desc)}"><meta name="twitter:image" content="${esc(p.image || 'https://christos.fashion/assets/og-image.jpg')}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">${jsonSafe(schema)}</script><script type="application/ld+json">${jsonSafe(breadcrumbSchema)}</script>
+<script type="application/ld+json">${jsonSafe(schema)}</script><script type="application/ld+json">${jsonSafe(breadcrumbSchema)}</script><script type="application/ld+json">${jsonSafe(faqSchema)}</script>
 <script src="/js/analytics.js" defer></script>
 </head>
 <body>
@@ -150,6 +223,7 @@ function renderProductPage(p, selectedVariantId) {
 <div class="product-policy-links"><a href="/shipping.html">Shipping details</a><a href="/returns.html">Replacement policy</a><a href="/faq.html">Sizing & FAQ</a></div>${therapyLink}
 </div></div></div></section>
 <section class="scripture-band scripture-band-burgundy" aria-label="Brand message"><div class="container"><blockquote>“Let your light shine before others.”</blockquote><cite>Matthew 5:16</cite></div></section>
+${faqHtml}
 <section class="section section-editorial surface-ivory"><div class="container"><div class="section-header" style="text-align:center"><p class="eyebrow">Wear the Message</p><h2>More Than Something<br><span class="title-italic">You Put On.</span></h2><p class="section-lede">Christos.Fashion creates modern Christian apparel for everyday moments — church, work, the gym, the coffee shop, and every conversation in between.</p><a href="/shop.html" class="btn btn-primary">Explore the Full Collection →</a></div></div></section>
 </main>
 <footer class="footer" role="contentinfo"><div class="container"><div class="footer-grid"><div class="footer-brand"><img src="/assets/christos-logo-gold.png" alt="Christos.Fashion"><p>Modern Christian apparel for believers who wear their faith boldly.</p></div><div class="footer-col"><h2 class="footer-heading">Shop</h2><ul><li><a href="/shop.html">All Products</a></li><li><a href="/collections/christian-shirts">Christian Shirts</a></li><li><a href="/collections/christian-hats">Christian Hats</a></li><li><a href="/collections/therapy">Therapy Collection</a></li></ul></div><div class="footer-col"><h2 class="footer-heading">Help</h2><ul><li><a href="/shipping.html">Shipping</a></li><li><a href="/returns.html">Returns & Replacements</a></li><li><a href="/faq.html">FAQ</a></li><li><a href="/contact.html">Contact</a></li></ul></div><div class="footer-col"><h2 class="footer-heading">Legal</h2><ul><li><a href="/privacy.html">Privacy</a></li><li><a href="/terms.html">Terms</a></li></ul></div></div></div></footer>

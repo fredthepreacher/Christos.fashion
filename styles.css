@@ -2961,3 +2961,17 @@ select:focus-visible {
   .trust-items { grid-template-columns: 1fr; }
   .therapy-art-card:last-child, .therapy-art-strip img:last-child { width: 70%; }
 }
+
+/* ============================================================
+   ABOUT — definitional answers (AEO)
+   Question-shaped h2s carry real weight with answer engines, so
+   these are genuine headings rather than an accordion.
+   ============================================================ */
+.about-answer { margin-top: clamp(28px, 4vw, 44px); }
+.about-answer + .about-answer { border-top: 1px solid var(--border); padding-top: clamp(24px, 3.5vw, 36px); }
+.about-answer h2 {
+  font-size: clamp(1.15rem, 2.1vw, 1.55rem);
+  line-height: 1.25;
+  margin-bottom: 12px;
+}
+.about-answer p { font-size: 1rem; line-height: 1.9; color: var(--cream-60); }
