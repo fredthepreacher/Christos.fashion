@@ -2894,3 +2894,70 @@ select:focus-visible {
   .cf-consent { flex-direction:column; align-items:flex-start; }
   .cf-consent > div { flex-wrap:wrap; }
 }
+
+/* ============================================================
+   CHRISTOS.FASHION — MOBILE PARITY + CONVERSION ARCHITECTURE PASS
+   ============================================================ */
+@media (max-width: 900px) {
+  .parallax { transform: none !important; }
+  .photo-slot img { transform: none !important; opacity: 1 !important; visibility: visible !important; }
+  .chapter-media { width: 100%; max-width: 720px; margin-inline: auto; }
+  .chapter-media .photo-slot { width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .reveal, .reveal-left, .reveal-right, .reveal-scale, .stagger, .stagger > * {
+    opacity: 1 !important; transform: none !important; transition: none !important;
+  }
+  .section { padding-block: clamp(58px, 15vw, 82px); }
+  .hero-story { min-height: auto; padding-top: calc(var(--nav-h) + 26px); padding-bottom: 42px; overflow: clip; }
+  .hero-story-inner { gap: 34px; }
+  .hero-story-copy { max-width: none; }
+  .hero-story-copy h1 { font-size: clamp(2rem, 10.2vw, 2.75rem); line-height: 1.03; letter-spacing: -.02em; }
+  .hero-story-lede { margin-top: 18px; font-size: .98rem; line-height: 1.72; max-width: none; }
+  .hero-story-actions { margin-top: 24px; }
+  .hero-story-proof { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; margin-top: 24px; padding-top: 18px; }
+  .hero-story-proof span { font-size: 10px; line-height: 1.45; }
+  .hero-story-proof span:last-child { grid-column: 1 / -1; }
+  .hero-collage { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); gap: 10px; align-items: end; width: 100%; max-width: 520px; margin: 0 auto; padding: 0; }
+  .hero-collage .photo-slot-primary, .hero-collage .photo-slot-secondary { position: relative; inset: auto; right: auto; bottom: auto; width: 100%; margin: 0; }
+  .hero-collage .photo-slot-primary { aspect-ratio: 4 / 5; }
+  .hero-collage .photo-slot-secondary { aspect-ratio: 1 / 1; margin-bottom: 12%; }
+  .hero-collage img[src*="hero-worship"] { object-position: 50% 38%; }
+  .hero-collage img[src*="hero-community"] { object-position: 50% 44%; }
+  .hero-story-scripture { margin-top: 34px; }
+  .hero-story-scripture p { font-size: 1rem; }
+  .trust-strip { padding-block: 18px; }
+  .trust-items { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); width: 100%; gap: 10px; padding-inline: 0; align-items: stretch; }
+  .trust-item { min-width: 0; align-items: flex-start; gap: 8px; padding: 12px 10px; border: 1px solid var(--border); border-radius: 10px; background: rgba(255,255,255,.015); }
+  .trust-icon { width: 17px; height: 17px; margin-top: 1px; }
+  .trust-item span { font-size: 9px; line-height: 1.4; letter-spacing: .055em; }
+  .marquee { min-height: 42px; }
+  .marquee-item { font-size: .7rem; }
+  .product-grid { grid-template-columns: 1fr; gap: 18px; }
+  .product-card { max-width: 520px; width: 100%; margin-inline: auto; }
+  .product-img-wrap { aspect-ratio: 1 / 1; }
+  .collection-quick-links { margin-top: 0; padding-inline: 0; padding-bottom: 22px; gap: 8px; }
+  .collection-quick-links a { font-size: .64rem; padding: 8px 11px; }
+  .therapy-art-grid, .therapy-art-strip { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .therapy-art-card:last-child, .therapy-art-strip img:last-child { grid-column: 1 / -1; width: calc(50% - 4px); justify-self: center; }
+  .chapter { gap: 28px; }
+  .chapter-copy > p { font-size: .96rem; line-height: 1.76; }
+  .chapter-media .photo-slot-landscape { aspect-ratio: 4 / 3; }
+  .chapter-media img[src*="chapter-conversation"] { object-position: 50% 46%; }
+  .gallery-mosaic { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .gallery-mosaic .gallery-feature { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 1 / 1; }
+  .gallery-mosaic .photo-slot { min-width: 0; aspect-ratio: 1 / 1; }
+  .gallery-mosaic img { object-position: center center; }
+  .gallery-cta { margin-top: 24px; }
+  .prayer-wall { gap: 28px; }
+  .email-section { padding-top: 64px; padding-bottom: 70px; }
+  .email-section h2 { font-size: clamp(2rem, 9vw, 2.6rem); }
+}
+
+@media (max-width: 380px) {
+  .hero-story-copy h1 { font-size: 1.95rem; }
+  .hero-collage { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .trust-items { grid-template-columns: 1fr; }
+  .therapy-art-card:last-child, .therapy-art-strip img:last-child { width: 70%; }
+}

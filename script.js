@@ -58,7 +58,7 @@ document.querySelectorAll('.rise-words').forEach(el => {
 // ============================================================
 (function initParallax() {
   const layers = Array.from(document.querySelectorAll('.parallax'));
-  if (!layers.length || prefersReducedMotion) return;
+  if (!layers.length || prefersReducedMotion || window.matchMedia('(max-width: 900px)').matches) return;
 
   let ticking = false;
 
