@@ -2975,3 +2975,202 @@ select:focus-visible {
   margin-bottom: 12px;
 }
 .about-answer p { font-size: 1rem; line-height: 1.9; color: var(--cream-60); }
+
+/* ============================================================
+   CHRISTOS.FASHION — MOBILE POLISH V2
+   Final mobile hierarchy, readability and conversion cleanup.
+   ============================================================ */
+
+/* Therapy artwork should never be visually dimmed when live Printify
+   products are available. The artwork itself is the campaign asset. */
+.therapy-collection-section.has-live-products .therapy-art-grid { opacity: 1; }
+.therapy-art-card span {
+  background: #0a0a0a;
+  color: #F7F5F1;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 12px 14px;
+  text-shadow: 0 1px 12px rgba(0,0,0,.5);
+}
+.therapy-art-card img { filter: contrast(1.07) saturate(1.04); }
+.therapy-context-note {
+  max-width: 62ch;
+  padding-top: 16px;
+  border-top: 1px solid rgba(24,22,18,.14);
+  font-size: .76rem;
+  line-height: 1.65;
+}
+
+/* The homepage already has a dedicated retention section immediately above
+   the footer. Avoid asking for the same email twice on the same page. */
+.page-home .footer-newsletter { display: none; }
+.page-home .footer-grid { grid-template-columns: 1.6fr 1fr 1fr; }
+
+/* Stronger footer contrast for readability/accessibility. */
+.footer-brand p,
+.footer-newsletter p,
+.footer-col a { color: var(--cream-60); }
+.footer-bottom-links a,
+.footer-copy,
+.footer-scripture-bottom p { color: var(--cream-35); }
+.footer-scripture-bottom cite { opacity: .8; }
+
+/* Story copy hierarchy. */
+#story .chapter-intro { color: var(--cream-80); }
+#story .chapter-copy > .eyebrow {
+  margin-top: 0;
+  font-size: 11px;
+  line-height: 1.35;
+  letter-spacing: .18em;
+}
+
+@media (max-width: 900px) {
+  .page-home .footer-grid { grid-template-columns: 1.3fr 1fr 1fr; gap: 30px; }
+}
+
+@media (max-width: 640px) {
+  /* Header: make the brand mark feel intentional rather than miniature. */
+  .nav-logo { height: 54px; }
+  .nav-inner { padding-inline: 22px; }
+  .nav-right { gap: 18px; }
+  .nav-cart-btn svg { width: 24px; height: 24px; }
+
+  /* Tighter, more consistent mobile rhythm. */
+  .section,
+  .section-editorial { padding-block: clamp(50px, 13vw, 68px); }
+  .section-header { margin-bottom: 32px; }
+  .section-lede { margin-top: 14px; font-size: .94rem; line-height: 1.7; }
+
+  /* Hero: the lifestyle campaign now appears directly after the CTA instead
+     of being buried below a cramped proof row. */
+  .hero-story { padding-top: calc(var(--nav-h) + 18px); padding-bottom: 36px; }
+  .hero-story-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .hero-story-copy { display: contents; }
+  .hero-story-copy > .eyebrow { order: 1; width: 100%; }
+  .hero-story-copy > h1 { order: 2; width: 100%; }
+  .hero-story-copy > .hero-story-lede { order: 3; width: 100%; }
+  .hero-story-copy > .hero-story-actions { order: 4; width: 100%; }
+  .hero-collage { order: 5; margin-top: 28px; margin-bottom: 0; }
+  .hero-story-proof { display: none !important; }
+  .hero-story-copy h1 {
+    font-size: clamp(2rem, 9vw, 2.55rem);
+    line-height: 1.045;
+    letter-spacing: -.025em;
+    margin-top: 14px;
+  }
+  .hero-story-lede { margin-top: 16px; font-size: .96rem; line-height: 1.68; }
+  .hero-story-actions { margin-top: 22px; gap: 10px; }
+  .hero-story-actions .btn { min-height: 54px; }
+  .hero-collage {
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr);
+    gap: 9px;
+    max-width: 470px;
+  }
+  .hero-collage .photo-slot-primary { aspect-ratio: 4 / 5; }
+  .hero-collage .photo-slot-secondary { margin-bottom: 10%; }
+  .hero-story-scripture { margin-top: 28px; padding-top: 20px; }
+  .hero-story-scripture p { font-size: .96rem; line-height: 1.55; }
+
+  /* The dedicated trust strip replaces the removed hero proof row. */
+  .trust-strip { padding-block: 14px; }
+  .trust-items { gap: 8px; }
+  .trust-item { padding: 11px 10px; }
+  .trust-item span { font-size: 9px; letter-spacing: .045em; }
+
+  /* Featured products are intentionally large and shoppable on mobile. */
+  #collection .section-header { margin-bottom: 28px; }
+  #collection .product-grid { gap: 22px; }
+
+  /* Therapy Collection: high-contrast campaign art, one clear CTA, and a
+     quieter responsible-use note. */
+  #therapy-collection .section-header { margin-bottom: 28px; }
+  .therapy-art-grid { margin-top: 0; gap: 10px; }
+  .therapy-art-card { gap: 0; border-color: rgba(166,124,82,.42); }
+  .therapy-art-card span {
+    min-height: 52px;
+    padding: 12px 8px;
+    font-size: .68rem;
+    line-height: 1.35;
+    letter-spacing: .055em;
+  }
+  .therapy-actions { margin-top: 24px; }
+  .therapy-actions .btn { width: 100%; max-width: 460px; justify-content: center; min-height: 54px; }
+  .therapy-context-note {
+    margin-top: 18px;
+    padding: 14px 14px 0;
+    font-size: .7rem;
+    line-height: 1.55;
+    text-align: left;
+  }
+
+  /* Why Christos: replace the manifesto wall with a normal editorial reading
+     hierarchy and scannable value cards. */
+  #story .chapter { gap: 30px; }
+  #story .chapter-number { margin-bottom: 10px; font-size: 10px; letter-spacing: .26em; }
+  #story .chapter-copy > .eyebrow { margin: 0 0 12px; font-size: 10px; letter-spacing: .16em; }
+  #story .chapter-copy h2 {
+    margin-top: 0;
+    font-size: clamp(1.95rem, 8.5vw, 2.45rem);
+    line-height: 1.08;
+  }
+  #story .chapter-copy > p { margin-top: 16px; font-size: .94rem; line-height: 1.7; }
+  #story .chapter-copy > .chapter-intro { color: var(--cream-80); }
+  #story .chapter-points { margin-top: 24px; gap: 10px; }
+  #story .chapter-point {
+    grid-template-columns: 22px 1fr;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(255,255,255,.018);
+  }
+  #story .chapter-point svg { width: 13px; height: 18px; margin: 2px auto 0; }
+  #story .chapter-point strong { font-size: .88rem; }
+  #story .chapter-point span { font-size: .82rem; line-height: 1.55; }
+  #story .chapter-copy .btn { width: 100%; justify-content: center; margin-top: 22px; }
+  #story .chapter-media { margin-top: 2px; }
+
+  /* Campaign gallery keeps every image visible without awkward spacing. */
+  #gallery .section-header { margin-bottom: 28px; }
+  .gallery-mosaic { gap: 10px; }
+
+  /* Prayer form and FAQ remain useful but should not create giant gaps. */
+  #prayer .prayer-wall { gap: 24px; }
+  #home-faq .faq-list { margin-top: 4px; }
+  #home-faq .faq-q { padding-block: 18px; }
+
+  /* Compact homepage footer: brand full width, Shop + Info side-by-side.
+     The duplicate newsletter is hidden above. */
+  .page-home .footer { padding-top: 44px; }
+  .page-home .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 22px;
+    margin-bottom: 36px;
+  }
+  .page-home .footer-brand { grid-column: 1 / -1; }
+  .footer-brand img { height: 46px; margin-bottom: 14px; }
+  .footer-brand p { max-width: 34ch; font-size: .84rem; }
+  .footer-col .footer-heading { margin-bottom: 14px; }
+  .footer-col ul { gap: 9px; }
+  .footer-col a { font-size: .84rem; }
+  .footer-scripture-bottom { padding-top: 10px; }
+  .footer-scripture-bottom p { font-size: .84rem; line-height: 1.55; }
+  .footer-bottom { padding-top: 22px; }
+  .footer-bottom-links { gap: 10px 16px; }
+  .footer-bottom-links a, .footer-copy { font-size: .75rem; }
+}
+
+@media (max-width: 380px) {
+  .nav-logo { height: 50px; }
+  .hero-story-copy h1 { font-size: 1.9rem; }
+  .hero-collage { max-width: 340px; }
+  .therapy-art-card span { font-size: .64rem; }
+  .page-home .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px 16px; }
+}
