@@ -120,7 +120,7 @@ function buildProductFaq(p, { colors, sizes, lo, hi }) {
 
   if (p.collections.includes('therapy')) {
     pairs.push([`What does the Therapy Collection mean?`,
-      `The Therapy Collection is a set of five Christian statement designs pointing to faith, Scripture and prayer as sources of hope and encouragement. The ${t} is part of that collection. These are statements of belief, not medical or mental-health advice.`]);
+      `The Therapy Collection is a set of Christian statement designs pointing to faith, Scripture and prayer as sources of hope and encouragement. The ${t} is part of that collection. These are statements of belief, not medical or mental-health advice.`]);
   }
 
   return pairs;

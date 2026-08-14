@@ -38,10 +38,40 @@ document.addEventListener('DOMContentLoaded', function(){
     if(!Array.isArray(products))throw new Error('Bad products payload');
     allProducts=products;
     if(featuredGrid){var featured=pickFeatured(products);featuredGrid.innerHTML=featured.map(function(p,i){return productCard(p,i,'');}).join('');wireGrid(featuredGrid,'Homepage Featured');}
-    var therapyGrid=document.getElementById('therapy-product-grid');
-    if(therapyGrid){var therapy=products.filter(function(p){return Array.isArray(p.collections)&&p.collections.indexOf('therapy')!==-1;}).slice(0,5);if(therapy.length){therapyGrid.innerHTML=therapy.map(function(p,i){return productCard(p,i,'therapy-product-card');}).join('');wireGrid(therapyGrid,'Therapy Collection');document.getElementById('therapy-collection')?.classList.add('has-live-products');}}
-  }).catch(function(err){console.warn('Home products failed to load:',err);});
+    renderTherapy(products);
+  }).catch(function(err){
+    console.warn('Home products failed to load:',err);
+    therapyState('error','Still Here','The live collection could not load just now. <a href="/collections/therapy">Open the Therapy Collection &rarr;</a>');
+  });
 });
+
+/* The homepage Therapy section used to be five hard-coded artwork tiles linking
+   to /products/<name>-is-my-therapy. Only two of those designs have a live
+   Printify product, so three tiles led to a 404. It now renders the same live
+   product cards the shop uses, driven entirely by the catalog — the section can
+   never advertise something that isn't purchasable. */
+function renderTherapy(products){
+  var grid=document.getElementById('therapy-product-grid');
+  if(!grid) return;
+  var therapy=products.filter(function(p){return Array.isArray(p.collections)&&p.collections.indexOf('therapy')!==-1;}).slice(0,6);
+  grid.setAttribute('aria-busy','false');
+  if(!therapy.length){
+    therapyState('empty','Back Soon','The Therapy Collection is being restocked. <a href="/shop.html">Browse everything else &rarr;</a>');
+    return;
+  }
+  grid.innerHTML=therapy.map(function(p,i){return productCard(p,i,'therapy-product-card');}).join('');
+  grid.dataset.count=String(therapy.length);
+  wireGrid(grid,'Therapy Collection');
+  document.getElementById('therapy-collection')?.classList.add('has-live-products');
+}
+
+function therapyState(kind,eyebrow,body){
+  var grid=document.getElementById('therapy-product-grid');
+  if(!grid) return;
+  grid.setAttribute('aria-busy','false');
+  grid.removeAttribute('data-count');
+  grid.innerHTML='<div class="therapy-state" data-state="'+kind+'"><p class="eyebrow">'+eyebrow+'</p><p>'+body+'</p></div>';
+}
 
 function openFor(productId){var p=allProducts.find(function(x){return x.id===productId;});if(!p)return;p.variants.length===1?addVariant(p,p.variants[0]):openVariantPicker(p,addVariant);}
 function addVariant(product,variant){Cart.add({productId:product.id,variantId:variant.id,title:cleanTitle(product.title),variantTitle:variant.title,price:variant.price,image:product.image,quantity:1});}
