@@ -283,6 +283,12 @@ document.querySelectorAll('.email-form, .footer-form').forEach(form => {
 
       btn.textContent = '✓ Subscribed!';
       btn.style.background = '#27ae60';
+      // Fires only after Netlify accepted the submission, so a failed signup
+      // never reports a Lead. Maps to Meta "Lead" in js/analytics.js.
+      window.cfTrack?.('generate_lead', {
+        content_name: 'Newsletter',
+        method: form.dataset.source || form.querySelector('[name="source"]')?.value || 'site',
+      });
       form.reset();
     } catch (err) {
       console.error('Newsletter signup failed:', err);

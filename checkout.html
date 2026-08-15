@@ -339,6 +339,28 @@
     let clientSecret = null;
     let orderTotalCents = 0; // captured for conversion tracking on the success page
 
+    // Meta attribution signals. _fbp is set by the Pixel; _fbc is derived from
+    // the fbclid on an ad click. Both are opaque identifiers, not personal data.
+    // They are forwarded to the server so the Conversions API Purchase (sent
+    // from stripe-webhook.js) can be matched to the same visitor. If the
+    // visitor declined consent no Pixel loaded, so these are simply absent.
+    function readCookie(name) {
+      const m = document.cookie.match(new RegExp('(^|;\\s*)' + name + '=([^;]*)'));
+      return m ? decodeURIComponent(m[2]) : '';
+    }
+    function metaAttribution() {
+      let fbc = readCookie('_fbc');
+      if (!fbc) {
+        const fbclid = new URLSearchParams(location.search).get('fbclid');
+        if (fbclid) fbc = 'fb.1.' + Date.now() + '.' + fbclid;
+      }
+      // Honour the consent bar server-side too. Without this a visitor who
+      // clicked Decline would still have their purchase reported to Meta by
+      // the webhook, which would make the consent UI a lie.
+      const consented = localStorage.getItem('cf_analytics_consent_v1') === 'accepted';
+      return { fbp: readCookie('_fbp'), fbc, sourceUrl: location.href.split('#')[0], consent: consented };
+    }
+
     // ── Boot ────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', async () => {
       CartUI.init();
@@ -406,6 +428,7 @@
               quantity:  i.quantity,
             })),
             shipping,
+            meta: metaAttribution(),
           }),
         });
         const data = await res.json();

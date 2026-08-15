@@ -37,7 +37,7 @@ exports.handler = async (event) => {
     return cors(400, JSON.stringify({ error: 'Invalid JSON body' }));
   }
 
-  const { items, shipping } = body;
+  const { items, shipping, meta } = body;
 
   if (!Array.isArray(items) || items.length === 0) {
     return cors(400, JSON.stringify({ error: 'Cart is empty' }));
@@ -106,6 +106,10 @@ exports.handler = async (event) => {
         shipping:   JSON.stringify(shipping ?? {}),
         subtotal:   subtotalCents,
         shipping_cost: shippingCents,
+        // Meta Conversions API attribution signals, captured here because the
+        // webhook that reports the Purchase has no browser context of its own.
+        // These are opaque ad-click/browser identifiers, not personal data.
+        ...metaAttribution(meta, event),
       },
       receipt_email: shipping.email,
       shipping: {
@@ -134,6 +138,24 @@ exports.handler = async (event) => {
     return cors(500, JSON.stringify({ error: err.message }));
   }
 };
+
+// Stripe metadata values are capped at 500 characters and 50 keys, so every
+// field here is trimmed hard. Omit anything empty rather than storing "".
+function metaAttribution(meta, event) {
+  const headers = event.headers || {};
+  const out = {
+    fbp: String((meta && meta.fbp) || '').slice(0, 128),
+    fbc: String((meta && meta.fbc) || '').slice(0, 255),
+    client_ip: String(headers['x-nf-client-connection-ip'] || headers['x-forwarded-for'] || '').split(',')[0].trim().slice(0, 64),
+    // '1' only when the visitor accepted the consent bar. The webhook refuses
+    // to send a Conversions API event without it.
+    mkt_consent: meta && meta.consent === true ? '1' : '',
+    client_ua: String(headers['user-agent'] || '').slice(0, 480),
+    src_url: String((meta && meta.sourceUrl) || '').slice(0, 480),
+  };
+  Object.keys(out).forEach(k => { if (!out[k]) delete out[k]; });
+  return out;
+}
 
 function validateUSShipping(shipping) {
   if (!shipping || typeof shipping !== 'object') return 'Shipping address is required';

@@ -14,6 +14,7 @@
 // ============================================================
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { isConfigured, buildUserData, sendServerEvent } = require('../lib/meta-capi');
 const PRINTIFY_BASE = 'https://api.printify.com/v1';
 
 exports.handler = async (event) => {
@@ -117,9 +118,76 @@ exports.handler = async (event) => {
     const order = await res.json();
     console.log('Printify order created:', order.id, '| Stripe:', intent.id);
 
+    // Report the Purchase to Meta only now — after Stripe confirmed the payment
+    // AND Printify accepted the order. Deliberately awaited (the function dies
+    // once we return) but wrapped so a Meta outage can never fail fulfillment.
+    await reportPurchaseToMeta(intent, lineItems, shipping);
+
     return { statusCode: 200, body: JSON.stringify({ printifyOrderId: order.id }) };
   } catch (err) {
     console.error('stripe-webhook order creation error:', err);
     return { statusCode: 500, body: 'Temporary order creation error; retry requested' };
   }
 };
+
+// ============================================================
+// Meta Conversions API — server-side Purchase
+//
+// This is the authoritative Purchase signal. It is fired from the Stripe
+// webhook rather than an open HTTP endpoint precisely because the webhook is
+// signature-verified: nobody can forge a conversion by POSTing to the site.
+//
+// event_id is derived from the PaymentIntent id, which the browser Pixel also
+// uses on order-success.html. Meta therefore deduplicates the pair, and a
+// Stripe webhook retry re-sends the same id rather than double-counting.
+// ============================================================
+async function reportPurchaseToMeta(intent, lineItems, shipping) {
+  try {
+    if (!isConfigured()) return;
+    // Respect the visitor's choice on the consent bar. No consent, no server event.
+    if (intent.metadata.mkt_consent !== '1') {
+      console.log('Meta Purchase skipped for', intent.id, '- no marketing consent');
+      return;
+    }
+
+    const contents = (lineItems || []).map(li => ({
+      id: String(li.product_id),
+      quantity: Number(li.quantity) || 1,
+    }));
+
+    const result = await sendServerEvent({
+      eventName: 'Purchase',
+      eventId: 'purchase_' + intent.id,
+      eventTime: intent.created,
+      eventSourceUrl: intent.metadata.src_url || 'https://christos.fashion/checkout.html',
+      actionSource: 'website',
+      userData: buildUserData({
+        email: shipping.email,
+        phone: shipping.phone,
+        name: shipping.name,
+        city: shipping.city,
+        state: shipping.state,
+        zip: shipping.zip,
+        country: shipping.country || 'us',
+        fbp: intent.metadata.fbp,
+        fbc: intent.metadata.fbc,
+        clientIp: intent.metadata.client_ip,
+        clientUserAgent: intent.metadata.client_ua,
+      }),
+      customData: {
+        currency: String(intent.currency || 'usd').toUpperCase(),
+        value: Number(intent.amount || 0) / 100,
+        content_type: 'product',
+        content_ids: contents.map(c => c.id),
+        contents,
+        num_items: contents.reduce((n, c) => n + c.quantity, 0),
+        order_id: intent.id,
+      },
+    });
+    if (!result.sent && result.reason !== 'not_configured') {
+      console.warn('Meta Purchase not recorded for', intent.id, '-', result.reason);
+    }
+  } catch (err) {
+    console.error('reportPurchaseToMeta failed (order is unaffected):', err.message);
+  }
+}
