@@ -134,8 +134,11 @@ exports.handler = async (event) => {
       totalCents,
     }));
   } catch (err) {
+    // Every message the shopper can act on is returned as an explicit 4xx
+    // above. Anything reaching here is an unexpected upstream failure whose
+    // text can quote Stripe or Printify internals, so it stays in the logs.
     console.error('stripe-payment-intent error:', err);
-    return cors(500, JSON.stringify({ error: err.message }));
+    return cors(500, JSON.stringify({ error: 'Unable to start checkout right now. Please try again.' }));
   }
 };
 

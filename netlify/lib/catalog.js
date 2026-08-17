@@ -15,6 +15,11 @@ const PRODUCT_OVERRIDES = {
 
 let catalogCache = { data: null, at: 0 };
 const CACHE_TTL_MS = 5 * 60 * 1000;
+// Upper bound on how long a Printify outage may be papered over with the last
+// known-good catalog. Beyond this, failing loudly beats selling from stale data.
+const STALE_MAX_MS = 6 * 60 * 60 * 1000;
+// Hard ceiling on pagination requests (50 products per page = 5,000 products).
+const MAX_CATALOG_PAGES = 100;
 
 function slugify(value) {
   return String(value || '')
@@ -148,18 +153,50 @@ async function fetchCatalog(env = process.env, options = {}) {
     return catalogCache.data;
   }
 
-  const response = await fetch(`${PRINTIFY_BASE}/shops/${PRINTIFY_SHOP_ID}/products.json?limit=50`, {
-    headers: { Authorization: `Bearer ${PRINTIFY_API_KEY}`, 'Content-Type': 'application/json' },
-  });
-  if (!response.ok) {
-    const text = await response.text();
-    const error = new Error(`Printify API error ${response.status}: ${text.slice(0, 400)}`);
-    error.status = response.status;
+  // Printify caps the product list at 50 items per response. Walk every page
+  // so the storefront keeps showing the whole catalog as it grows past 50.
+  // Two independent stops guard against an infinite loop if Printify ever
+  // reports pagination inconsistently: the advertised last_page, and a hard
+  // page ceiling.
+  const source = [];
+  try {
+    let page = 1;
+    let lastPage = 1;
+    do {
+      const response = await fetch(`${PRINTIFY_BASE}/shops/${PRINTIFY_SHOP_ID}/products.json?limit=50&page=${page}`, {
+        headers: { Authorization: `Bearer ${PRINTIFY_API_KEY}`, 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        const error = new Error(`Printify API error ${response.status}: ${text.slice(0, 400)}`);
+        error.status = response.status;
+        throw error;
+      }
+
+      const json = await response.json();
+      // A bare array means an unpaginated response — take it and stop.
+      if (Array.isArray(json)) { source.push(...json); break; }
+
+      const batch = json.data || [];
+      source.push(...batch);
+      lastPage = Math.max(1, Number(json.last_page) || 1);
+      // Defensive: an empty page means there is nothing further to walk,
+      // whatever last_page claims.
+      if (batch.length === 0) break;
+      page += 1;
+    } while (page <= lastPage && page <= MAX_CATALOG_PAGES);
+  } catch (error) {
+    // A transient Printify failure should not empty the storefront. If we
+    // previously loaded a good catalog and it is not yet unreasonably old,
+    // keep selling from it. Past that bound we surface the error rather than
+    // quietly serving prices and stock that may no longer be real.
+    if (catalogCache.data && Date.now() - catalogCache.at < STALE_MAX_MS) {
+      console.warn('Printify catalog refresh failed; serving cached catalog:', error.message);
+      return catalogCache.data;
+    }
     throw error;
   }
 
-  const json = await response.json();
-  const source = Array.isArray(json) ? json : (json.data || []);
   const products = source.map(normalizeProduct).filter(p => p.visible && p.variants.length > 0);
   catalogCache = { data: products, at: Date.now() };
   return products;

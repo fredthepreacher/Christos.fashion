@@ -81,26 +81,90 @@
   </main>
 
   <script>
+    // Conversion reporting is driven by Stripe, not by this URL.
+    //
+    // Loading this page proves nothing — anyone can visit it, and anyone can
+    // type their own `?value=`. So we ask /api/payment-status whether that
+    // PaymentIntent actually succeeded and for how much, and only report a
+    // purchase (GA4 + Google Ads + Meta) once the server confirms it. If the
+    // check fails, no conversion event fires at all.
     const params  = new URLSearchParams(window.location.search);
     const orderId = params.get('order');
-    const value = Number(params.get('value') || 0);
-    const currency = params.get('currency') || 'USD';
+    let verifiedPurchase = null;
+    let analyticsReady = false;
+
     if (orderId) {
-      const el = document.getElementById('order-id-display');
-      el.textContent = 'Order ID: ' + orderId;
+      document.getElementById('order-id-display').textContent = 'Order ID: ' + orderId;
+      verifyPurchase();
     }
-    function trackPurchaseOnce() {
-      if (!orderId || !window.cfTrack) return;
-      const key = 'cf_purchase_tracked_' + orderId;
+
+    async function verifyPurchase() {
+      try {
+        const res = await fetch('/api/payment-status?order=' + encodeURIComponent(orderId), {
+          credentials: 'same-origin',
+          cache: 'no-store',
+        });
+        if (!res.ok) throw new Error('Payment verification failed');
+        const server = await res.json();
+
+        // The browser still holds the nicer product names and unit prices from
+        // the cart. Keep those for reporting quality, but only for line items
+        // the server actually confirmed — and let the server win on anything
+        // that affects the reported amount (quantity, ids, value, currency).
+        let storedItems = [];
+        try { storedItems = JSON.parse(sessionStorage.getItem('cf_last_purchase_items') || '[]'); } catch (e) {}
+        const stored = new Map();
+        storedItems.forEach(item => {
+          const id = String(item.item_id || '');
+          if (!id) return;
+          stored.set(id, item);
+        });
+
+        const items = (server.items || []).map(item => {
+          const extra = stored.get(String(item.item_id || '')) || {};
+          return {
+            item_id: item.item_id,
+            item_name: extra.item_name,
+            item_variant: extra.item_variant,
+            price: extra.price,
+            quantity: item.quantity,
+          };
+        });
+
+        verifiedPurchase = {
+          transaction_id: server.orderId,
+          value: Number(server.value || 0),
+          currency: server.currency || 'USD',
+          items,
+        };
+        maybeTrackPurchase();
+      } catch (err) {
+        // Deliberately silent for the shopper: their order is fine, only our
+        // measurement is degraded. Nothing is reported on a failed check.
+        console.warn('Purchase verification unavailable; no conversion reported.');
+      }
+    }
+
+    function maybeTrackPurchase() {
+      if (!verifiedPurchase || !analyticsReady || !window.cfTrack) return;
+      // Survives a refresh: the same PaymentIntent is only ever reported once
+      // from this browser. The server-side Meta event shares the same event id,
+      // so Meta deduplicates the pair rather than counting two sales.
+      const key = 'cf_purchase_tracked_' + verifiedPurchase.transaction_id;
       if (localStorage.getItem(key)) return;
-      let items = [];
-      try { items = JSON.parse(sessionStorage.getItem('cf_last_purchase_items') || '[]'); } catch {}
-      window.cfTrack('purchase', { transaction_id:orderId, value:value, currency:currency, items:items });
+      window.cfTrack('purchase', verifiedPurchase);
       localStorage.setItem(key, '1');
       sessionStorage.removeItem('cf_last_purchase_items');
     }
-    window.addEventListener('cf-analytics-ready', trackPurchaseOnce, { once:true });
-    setTimeout(trackPurchaseOnce, 1200);
+
+    window.addEventListener('cf-analytics-ready', () => {
+      analyticsReady = true;
+      maybeTrackPurchase();
+    }, { once: true });
+
+    // If analytics.js finished booting before this listener was registered the
+    // event has already gone by, so retry once the config fetch has had time.
+    setTimeout(() => { analyticsReady = true; maybeTrackPurchase(); }, 1500);
   </script>
   <script src="script.js"></script>
 </body>

@@ -486,13 +486,14 @@
       }
 
       if (paymentIntent.status === 'succeeded') {
-        const valueUSD = (orderTotalCents / 100).toFixed(2);
         const purchaseItems = Cart.items().map(i => ({item_id:i.productId,item_name:i.title,item_variant:i.variantTitle,price:i.price/100,quantity:i.quantity}));
         sessionStorage.setItem('cf_last_purchase_items', JSON.stringify(purchaseItems));
         window.cfTrack?.('add_payment_info', {currency:'USD', value:orderTotalCents/100, payment_type:'card', items:purchaseItems});
         Cart.clear();
+        // No value/currency in the URL: the success page asks Stripe for the
+        // real amount instead of trusting anything a visitor can edit.
         window.location.href =
-          `order-success.html?order=${paymentIntent.id}&value=${valueUSD}&currency=USD`;
+          `order-success.html?order=${encodeURIComponent(paymentIntent.id)}`;
       }
     }
 
