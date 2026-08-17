@@ -15,6 +15,7 @@
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { isConfigured, buildUserData, sendServerEvent } = require('../lib/meta-capi');
+const { parseLineItems, shippingFromIntent } = require('../lib/order-metadata');
 const PRINTIFY_BASE = 'https://api.printify.com/v1';
 
 exports.handler = async (event) => {
@@ -48,19 +49,22 @@ exports.handler = async (event) => {
   }
 
   const intent = stripeEvent.data.object;
-  const { line_items: lineItemsJSON, shipping: shippingJSON } = intent.metadata;
 
-  if (!lineItemsJSON || !shippingJSON) {
-    console.error('Missing metadata on PaymentIntent', intent.id);
+  // The cart comes from compact metadata (with a legacy JSON fallback for
+  // PaymentIntents created before that encoding shipped). The address comes
+  // from what Stripe itself recorded on the intent, so fulfillment no longer
+  // depends on a metadata blob that could be truncated or missing.
+  const lineItems = parseLineItems(intent.metadata);
+  const shipping = shippingFromIntent(intent);
+
+  if (!lineItems.length || !shipping.email || !shipping.address1) {
+    console.error(
+      'Missing fulfillment details on PaymentIntent', intent.id,
+      '| items:', lineItems.length,
+      '| email:', shipping.email ? 'yes' : 'no',
+      '| address1:', shipping.address1 ? 'yes' : 'no'
+    );
     return { statusCode: 500, body: 'Missing fulfillment metadata; retry requested' };
-  }
-
-  let lineItems, shipping;
-  try {
-    lineItems = JSON.parse(lineItemsJSON);
-    shipping  = JSON.parse(shippingJSON);
-  } catch {
-    return { statusCode: 500, body: 'Invalid fulfillment metadata; retry requested' };
   }
 
   try {

@@ -23,6 +23,24 @@
   let queue = [];
 
   // ---- public API ------------------------------------------------------
+
+  // Lets a visitor change their mind. The privacy page calls this.
+  //
+  // Clearing the stored choice and reloading is deliberate rather than
+  // lazy: once gtag or fbq has been injected into the page it cannot be
+  // meaningfully unloaded, so the only honest way to return someone to a
+  // no-tracking state is a fresh document. On reload no ID has consent yet,
+  // so nothing is requested and the preference bar is shown again.
+  window.cfManageTrackingPreferences = function () {
+    try { localStorage.removeItem(CONSENT_KEY); } catch (e) { /* private mode */ }
+    window.location.reload();
+  };
+
+  // Reports the current choice: 'accepted', 'declined', or 'unset'.
+  window.cfTrackingConsent = function () {
+    try { return localStorage.getItem(CONSENT_KEY) || 'unset'; } catch (e) { return 'unset'; }
+  };
+
   window.cfTrack = function (name, params) {
     if (!name || declined) return;
     if (!started) { queue.push([name, params || {}]); return; }

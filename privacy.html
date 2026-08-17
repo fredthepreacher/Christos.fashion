@@ -170,10 +170,18 @@
             Analytics and advertising cookies — used by Google Analytics, Google Ads, and the Meta
             Pixel — are <strong>not</strong> loaded until you choose &ldquo;Accept&rdquo; on the
             preference bar. If you choose &ldquo;Decline&rdquo;, none of those scripts are requested
-            and no advertising identifiers are set. Your choice is stored on your own device and you
-            can change it by clearing this site&rsquo;s data in your browser. You can also disable
+            and no advertising identifiers are set. Your choice is stored on your own device, and you
+            can change it at any time using the button below. You can also disable
             cookies entirely in your browser settings, though some parts of the site — like the
             shopping cart — may not work correctly without them.
+          </p>
+          <p style="margin-top:20px">
+            <button type="button" class="btn btn-outline btn-sm" onclick="window.cfManageTrackingPreferences?.()">
+              Change my analytics &amp; advertising choice
+            </button>
+            <span style="display:block; font-size:.78rem; color:var(--cream-35); margin-top:10px; line-height:1.6">
+              Clears your saved preference and reloads this page so you can choose again.
+            </span>
           </p>
 
           <h2 style="margin-top:40px; margin-bottom:16px">Data Retention</h2>

@@ -12,6 +12,7 @@
 // ============================================================
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { parseLineItems } = require('../lib/order-metadata');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return response(204, '');
@@ -32,9 +33,9 @@ exports.handler = async (event) => {
       return response(404, JSON.stringify({ error: 'Confirmed payment not found' }));
     }
 
-    let lineItems = [];
-    try { lineItems = JSON.parse((intent.metadata && intent.metadata.line_items) || '[]'); } catch (e) { lineItems = []; }
-    if (!Array.isArray(lineItems)) lineItems = [];
+    // Same shared decoder the webhook uses, so the compact and legacy
+    // encodings stay in agreement across every reader.
+    const lineItems = parseLineItems(intent.metadata);
 
     return response(200, JSON.stringify({
       orderId: intent.id,

@@ -20,6 +20,7 @@
 // ============================================================
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { encodeLineItems, LINE_ITEMS_KEY } = require('../lib/order-metadata');
 const PRINTIFY_BASE = 'https://api.printify.com/v1';
 
 // Flat shipping cost in cents. Adjust or add logic for free-shipping threshold.
@@ -102,8 +103,12 @@ exports.handler = async (event) => {
       currency: 'usd',
       // Store everything we need to create the Printify order in the webhook
       metadata: {
-        line_items: JSON.stringify(lineItems),
-        shipping:   JSON.stringify(shipping ?? {}),
+        // Compact encoding: Stripe caps metadata values at 500 characters and
+        // the old JSON form blew past that at 7+ distinct items, failing
+        // checkout outright. The shipping address is NOT duplicated here —
+        // Stripe stores it natively below, and the webhook reads it back from
+        // there via shippingFromIntent().
+        [LINE_ITEMS_KEY]: encodeLineItems(lineItems),
         subtotal:   subtotalCents,
         shipping_cost: shippingCents,
         // Meta Conversions API attribution signals, captured here because the
